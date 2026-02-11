@@ -1,0 +1,36 @@
+/* ===================================
+   Base Layout – Afshin Ghafoori
+=================================== */
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+  background-color: #f7f7f7;
+  color: #111;
+  line-height: 1.6;
+}
+
+main {
+  max-width: 900px;
+  margin: 80px auto;
+  padding: 0 20px;
+}
+
+h1, h2, h3 {
+  font-weight: 500;
+  margin-bottom: 20px;
+}
+
+a {
+  color: #111;
+  text-decoration: none;
+  border-bottom: 1px solid #111;
+}
+
+a:hover {
+  opacity: 0.7;
+}
