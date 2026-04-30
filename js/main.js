@@ -31,35 +31,63 @@ const featuredTiles = [
 const featuredMap = new Map(featuredTiles.map((tile) => [tile.id, tile]));
 const gridEl = document.getElementById("pixel-grid");
 
+function shuffle(array) {
+  const clone = [...array];
+  for (let index = clone.length - 1; index > 0; index -= 1) {
+    const randomIndex = Math.floor(Math.random() * (index + 1));
+    [clone[index], clone[randomIndex]] = [clone[randomIndex], clone[index]];
+  }
+  return clone;
+}
+
 function attachRippleHoverEffect(tiles) {
   const maxDistance = 2;
-  const delayStep = 75;
+  const stepDelay = 95;
+  let activeTimers = [];
 
-  const clearDelays = () => {
-    tiles.forEach((tile) => tile.style.setProperty("--flip-delay", "0ms"));
+  const resetTiles = () => {
+    activeTimers.forEach((timer) => window.clearTimeout(timer));
+    activeTimers = [];
+    tiles.forEach((tile) => {
+      tile.classList.remove("is-flipped");
+      tile.style.setProperty("--flip-delay", "0ms");
+    });
   };
 
   tiles.forEach((tile, tileIndex) => {
     tile.addEventListener("mouseenter", () => {
+      resetTiles();
+
       const originRow = Math.floor(tileIndex / GRID_COLUMNS);
       const originCol = tileIndex % GRID_COLUMNS;
 
+      const nearby = [];
       tiles.forEach((candidate, candidateIndex) => {
         const row = Math.floor(candidateIndex / GRID_COLUMNS);
         const col = candidateIndex % GRID_COLUMNS;
         const distance = Math.abs(originRow - row) + Math.abs(originCol - col);
 
         if (distance <= maxDistance) {
-          candidate.classList.add("is-flipped");
-          candidate.style.setProperty("--flip-delay", `${distance * delayStep}ms`);
+          nearby.push({ candidate, distance, candidateIndex });
         }
+      });
+
+      const center = nearby.find((entry) => entry.candidateIndex === tileIndex);
+      const surrounding = nearby.filter((entry) => entry.candidateIndex !== tileIndex);
+
+      if (center) {
+        center.candidate.classList.add("is-flipped");
+      }
+
+      shuffle(surrounding).forEach((entry, order) => {
+        const timer = window.setTimeout(() => {
+          entry.candidate.classList.add("is-flipped");
+        }, (order + 1) * stepDelay);
+        activeTimers.push(timer);
       });
     });
 
-    tile.addEventListener("mouseleave", () => {
-      tiles.forEach((candidate) => candidate.classList.remove("is-flipped"));
-      clearDelays();
-    });
+    tile.addEventListener("mouseleave", resetTiles);
   });
 }
 
