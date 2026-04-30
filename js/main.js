@@ -41,6 +41,7 @@ function shuffle(array) {
 }
 
 function attachRippleHoverEffect(tiles) {
+  const maxDistance = 2;
   const stepDelay = 95;
   let activeTimers = [];
 
@@ -60,12 +61,11 @@ function attachRippleHoverEffect(tiles) {
       const originRow = Math.floor(tileIndex / GRID_COLUMNS);
       const originCol = tileIndex % GRID_COLUMNS;
 
-      const maxDistance = Math.floor(Math.random() * 3) + 1;
       const nearby = [];
       tiles.forEach((candidate, candidateIndex) => {
         const row = Math.floor(candidateIndex / GRID_COLUMNS);
         const col = candidateIndex % GRID_COLUMNS;
-        const distance = Math.max(Math.abs(originRow - row), Math.abs(originCol - col));
+        const distance = Math.abs(originRow - row) + Math.abs(originCol - col);
 
         if (distance <= maxDistance) {
           nearby.push({ candidate, distance, candidateIndex });
@@ -84,22 +84,14 @@ function attachRippleHoverEffect(tiles) {
         if (!distanceRings.has(entry.distance)) {
           distanceRings.set(entry.distance, []);
         }
-
-        // Keep all close ring tiles, but vary outer rings for more organic patterns.
-        const includeChance = entry.distance === 1 ? 1 : 0.55 + Math.random() * 0.35;
-        if (Math.random() <= includeChance) {
-          distanceRings.get(entry.distance).push(entry);
-        }
+        distanceRings.get(entry.distance).push(entry);
       });
 
       const orderedSurrounding = [];
       Array.from(distanceRings.keys())
         .sort((a, b) => a - b)
         .forEach((distance) => {
-          const ringTiles = distanceRings.get(distance);
-          if (ringTiles.length > 0) {
-            orderedSurrounding.push(...shuffle(ringTiles));
-          }
+          orderedSurrounding.push(...shuffle(distanceRings.get(distance)));
         });
 
       orderedSurrounding.forEach((entry, order) => {
