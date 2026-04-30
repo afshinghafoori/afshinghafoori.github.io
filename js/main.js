@@ -2,37 +2,26 @@ const GRID_COLUMNS = 12;
 const GRID_ROWS = 12;
 const TOTAL_TILES = GRID_COLUMNS * GRID_ROWS;
 
-const palette = [
-  "#f4f1ef",
-  "#ebe7e4",
-  "#d7cec7",
-  "#c9bbb2",
-  "#d07d58",
-  "#b96b52"
-];
+const palette = ["#ffffff", "#f6f6f6", "#ececec", "#e2e2e2", "#d8d8d8", "#cecece"];
 
-/**
- * Only define tiles that need a specific image/link.
- * All other tiles are generated as decorative defaults.
- */
 const featuredTiles = [
   {
     id: 18,
-    color: "#d07d58",
+    color: "#d8d8d8",
     image: "assets/images/grid/detaljplaner.jpg",
     href: "portfolio/detaljplaner/",
     label: "Detaljplaner"
   },
   {
     id: 67,
-    color: "#c9bbb2",
+    color: "#e2e2e2",
     image: "assets/images/grid/projects.jpg",
     href: "portfolio/projects/",
     label: "Projects"
   },
   {
     id: 122,
-    color: "#b96b52",
+    color: "#cecece",
     image: "assets/images/grid/rosengard.jpg",
     href: "portfolio/rosengard/",
     label: "Rosengård"
@@ -41,6 +30,38 @@ const featuredTiles = [
 
 const featuredMap = new Map(featuredTiles.map((tile) => [tile.id, tile]));
 const gridEl = document.getElementById("pixel-grid");
+
+function attachRippleHoverEffect(tiles) {
+  const maxDistance = 2;
+  const delayStep = 75;
+
+  const clearDelays = () => {
+    tiles.forEach((tile) => tile.style.setProperty("--flip-delay", "0ms"));
+  };
+
+  tiles.forEach((tile, tileIndex) => {
+    tile.addEventListener("mouseenter", () => {
+      const originRow = Math.floor(tileIndex / GRID_COLUMNS);
+      const originCol = tileIndex % GRID_COLUMNS;
+
+      tiles.forEach((candidate, candidateIndex) => {
+        const row = Math.floor(candidateIndex / GRID_COLUMNS);
+        const col = candidateIndex % GRID_COLUMNS;
+        const distance = Math.abs(originRow - row) + Math.abs(originCol - col);
+
+        if (distance <= maxDistance) {
+          candidate.classList.add("is-flipped");
+          candidate.style.setProperty("--flip-delay", `${distance * delayStep}ms`);
+        }
+      });
+    });
+
+    tile.addEventListener("mouseleave", () => {
+      tiles.forEach((candidate) => candidate.classList.remove("is-flipped"));
+      clearDelays();
+    });
+  });
+}
 
 if (gridEl) {
   const fragment = document.createDocumentFragment();
@@ -72,7 +93,7 @@ if (gridEl) {
 
     const imageMarkup = tile.image
       ? `<img src="${tile.image}" alt="" loading="lazy" decoding="async">`
-      : "<div class=\"tile-empty\" aria-hidden=\"true\"></div>";
+      : '<div class="tile-empty" aria-hidden="true"></div>';
 
     wrapper.innerHTML = `
       <span class="tile-inner">
@@ -87,4 +108,5 @@ if (gridEl) {
   }
 
   gridEl.appendChild(fragment);
+  attachRippleHoverEffect(Array.from(gridEl.children));
 }
