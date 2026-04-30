@@ -79,7 +79,22 @@ function attachRippleHoverEffect(tiles) {
         center.candidate.classList.add("is-flipped");
       }
 
-      shuffle(surrounding).forEach((entry, order) => {
+      const distanceRings = new Map();
+      surrounding.forEach((entry) => {
+        if (!distanceRings.has(entry.distance)) {
+          distanceRings.set(entry.distance, []);
+        }
+        distanceRings.get(entry.distance).push(entry);
+      });
+
+      const orderedSurrounding = [];
+      Array.from(distanceRings.keys())
+        .sort((a, b) => a - b)
+        .forEach((distance) => {
+          orderedSurrounding.push(...shuffle(distanceRings.get(distance)));
+        });
+
+      orderedSurrounding.forEach((entry, order) => {
         const timer = window.setTimeout(() => {
           entry.candidate.classList.add("is-flipped");
         }, (order + 1) * stepDelay);
