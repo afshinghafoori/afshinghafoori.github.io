@@ -3,81 +3,22 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Portfolio för Afshin Ghafoori: arkitektur, planering och digitala verktyg." />
-  <title>Afshin Ghafoori | Portfolio</title>
+  <meta name="description" content="Pixelbaserad portfolio-översikt för Afshin Ghafoori." />
+  <title>Afshin Ghafoori | Pixel Portfolio</title>
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
-  <header class="site-header">
-    <div class="container header-inner">
-      <a class="brand" href="#top">Afshin Ghafoori</a>
-      <nav aria-label="Huvudnavigering">
-        <ul class="nav-list">
-          <li><a href="#about">Om mig</a></li>
-          <li><a href="#projects">Projekt</a></li>
-          <li><a href="#skills">Kompetenser</a></li>
-          <li><a href="#contact">Kontakt</a></li>
-        </ul>
-      </nav>
-    </div>
-  </header>
+  <main class="landing" aria-labelledby="landing-title">
+    <header class="landing-header">
+      <p class="eyebrow">Portfolio · Arkitektur · Planering</p>
+      <h1 id="landing-title">Pixel Grid Portfolio</h1>
+      <p class="intro">Hovra för att se motiv. Klicka på markerade rutor för att öppna projekt.</p>
+    </header>
 
-  <main id="top">
-    <section class="hero container" aria-labelledby="hero-title">
-      <p class="eyebrow">Arkitekt · Planarkitekt · Digitala verktyg</p>
-      <h1 id="hero-title">Jag designar hållbara och människocentrerade miljöer.</h1>
-      <p class="lead">
-        Med erfarenhet inom stadsutveckling och digitala processer hjälper jag team att gå från idé till genomförbar lösning.
-      </p>
-      <a class="button" href="#projects">Se utvalda projekt</a>
-    </section>
-
-    <section id="about" class="container section" aria-labelledby="about-title">
-      <h2 id="about-title">Om mig</h2>
-      <p>
-        Jag arbetar i gränslandet mellan gestaltning, planering och teknik. Mitt fokus är att skapa tydliga processer,
-        robusta beslutsunderlag och rumsliga kvaliteter som håller över tid.
-      </p>
-    </section>
-
-    <section id="projects" class="container section" aria-labelledby="projects-title">
-      <h2 id="projects-title">Utvalda projekt</h2>
-      <div class="grid cards">
-        <article class="card">
-          <h3>Stadsdel i förändring</h3>
-          <p>Strategisk planering för förtätning med fokus på mobilitet, grönstruktur och social hållbarhet.</p>
-        </article>
-        <article class="card">
-          <h3>Digital planprocess</h3>
-          <p>Implementation av digitala verktyg för att förbättra samordning, visualisering och beslutsfattande.</p>
-        </article>
-        <article class="card">
-          <h3>Gestaltningsprogram</h3>
-          <p>Riktlinjer för bebyggelse och offentliga rum för att stärka platsens identitet och användbarhet.</p>
-        </article>
-      </div>
-    </section>
-
-    <section id="skills" class="container section" aria-labelledby="skills-title">
-      <h2 id="skills-title">Kompetenser</h2>
-      <ul class="tag-list" aria-label="Kompetensområden">
-        <li>Stadsplanering</li>
-        <li>Arkitektonisk analys</li>
-        <li>GIS & visualisering</li>
-        <li>Digitala arbetsflöden</li>
-        <li>Tvärdisciplinär samverkan</li>
-      </ul>
+    <section class="grid-shell" aria-label="Interaktiv portfolio-grid">
+      <div id="pixel-grid" class="pixel-grid" role="list"></div>
     </section>
   </main>
-
-  <footer id="contact" class="site-footer">
-    <div class="container">
-      <h2>Kontakt</h2>
-      <p>Har du ett projekt eller samarbete i åtanke?</p>
-      <p><a href="mailto:hello@example.com">hello@example.com</a></p>
-      <small>&copy; <span id="year"></span> Afshin Ghafoori</small>
-    </div>
-  </footer>
 
   <script src="js/main.js"></script>
 </body>
