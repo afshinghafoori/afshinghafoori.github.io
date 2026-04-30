@@ -65,7 +65,7 @@ function attachRippleHoverEffect(tiles) {
       tiles.forEach((candidate, candidateIndex) => {
         const row = Math.floor(candidateIndex / GRID_COLUMNS);
         const col = candidateIndex % GRID_COLUMNS;
-        const distance = Math.abs(originRow - row) + Math.abs(originCol - col);
+        const distance = Math.max(Math.abs(originRow - row), Math.abs(originCol - col));
 
         if (distance <= maxDistance) {
           nearby.push({ candidate, distance, candidateIndex });
