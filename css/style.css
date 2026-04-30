@@ -1,5 +1,5 @@
 :root {
-  --bg: #f4f4f4;
+  --bg: #ffffff;
   --text: #1b1a19;
   --tile-border: rgba(0, 0, 0, 0.08);
   --focus: #111827;
@@ -30,6 +30,7 @@ body {
 }
 
 .pixel-grid {
+  background: #ffffff;
   width: min(1200px, 100%);
   display: grid;
   grid-template-columns: repeat(var(--grid-columns), minmax(0, 1fr));
