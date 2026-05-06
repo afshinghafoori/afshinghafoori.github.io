@@ -1,16 +1,12 @@
-/* ===================================
-   Portfolio Layout – Afshin Ghafoori
-=================================== */
-
 :root {
-  --bg: #f5f6f8;
-  --surface: #ffffff;
-  --text: #111827;
-  --muted: #4b5563;
-  --border: #d1d5db;
-  --accent: #1f2937;
-  --radius: 12px;
-  --shadow: 0 4px 20px rgba(17, 24, 39, 0.06);
+  --bg: #ffffff;
+  --text: #1b1a19;
+  --tile-border: rgba(0, 0, 0, 0.08);
+  --focus: #111827;
+  --grid-columns: 12;
+  --grid-rows: 8;
+  --visible-tiles: 96;
+  --viewport-padding: clamp(12px, 3vmin, 32px);
 }
 
 * {
@@ -18,174 +14,155 @@
 }
 
 html {
-  scroll-behavior: smooth;
+  min-height: 100%;
 }
 
 body {
   margin: 0;
+  min-height: 100vh;
+  min-height: 100dvh;
   font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
   background: var(--bg);
   color: var(--text);
-  line-height: 1.6;
+  overflow-x: hidden;
 }
 
-.container {
-  width: min(1080px, 92vw);
+.landing {
   margin: 0 auto;
 }
 
-.site-header {
-  position: sticky;
-  top: 0;
-  background: color-mix(in srgb, var(--surface) 92%, transparent);
-  backdrop-filter: blur(8px);
-  border-bottom: 1px solid var(--border);
-}
-
-.header-inner {
-  min-height: 72px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 20px;
-}
-
-.brand {
-  font-weight: 700;
-  text-decoration: none;
-  color: var(--text);
-}
-
-.nav-list {
-  list-style: none;
-  display: flex;
-  gap: 16px;
-  margin: 0;
-  padding: 0;
-}
-
-.nav-list a {
-  color: var(--muted);
-  text-decoration: none;
-  font-size: 0.95rem;
-}
-
-.nav-list a:hover,
-.nav-list a:focus-visible,
-a:hover,
-a:focus-visible {
-  color: var(--text);
-}
-
-.hero {
-  padding: 88px 0 56px;
-}
-
-.eyebrow {
-  color: var(--muted);
-  letter-spacing: 0.02em;
-}
-
-h1,
-h2,
-h3 {
-  margin: 0 0 14px;
-  line-height: 1.25;
-}
-
-h1 {
-  max-width: 22ch;
-  font-size: clamp(1.8rem, 4vw, 3rem);
-}
-
-.lead {
-  max-width: 68ch;
-  color: var(--muted);
-}
-
-.button {
-  display: inline-block;
-  margin-top: 12px;
-  padding: 10px 16px;
-  border-radius: 999px;
-  background: var(--accent);
-  color: #fff;
-  text-decoration: none;
-  border: 1px solid var(--accent);
-}
-
-.section {
-  padding: 24px 0 40px;
-}
-
-.grid {
+.viewport-center {
+  width: 100%;
+  min-height: 100vh;
+  min-height: 100dvh;
   display: grid;
-  gap: 16px;
+  place-items: center;
+  padding: var(--viewport-padding);
 }
 
-.cards {
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-}
-
-.card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-  padding: 18px;
-}
-
-.card p {
-  color: var(--muted);
-  margin-bottom: 0;
-}
-
-.tag-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
+.grid-shell {
+  width: min(1200px, calc(100vw - (var(--viewport-padding) * 2)), calc((100dvh - (var(--viewport-padding) * 2)) * var(--grid-columns) / var(--grid-rows)));
   display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
+  justify-content: center;
 }
 
-.tag-list li {
-  background: #e5e7eb;
-  color: var(--text);
-  border-radius: 999px;
-  padding: 6px 12px;
-  font-size: 0.92rem;
+.pixel-grid {
+  background: #ffffff;
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(var(--grid-columns), minmax(0, 1fr));
+  gap: 0;
 }
 
-.site-footer {
-  margin-top: 24px;
-  padding: 36px 0 48px;
-  border-top: 1px solid var(--border);
-  background: var(--surface);
+.tile {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border: 1px solid var(--tile-border);
+  background: none;
+  padding: 0;
+  cursor: default;
+  perspective: 900px;
 }
 
-.site-footer p,
-.site-footer small {
-  color: var(--muted);
+.tile--link {
+  cursor: pointer;
 }
 
-a {
-  color: inherit;
+.tile-inner {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  transition: transform 550ms cubic-bezier(0.2, 0.65, 0.2, 1);
+  transition-delay: var(--flip-delay, 0ms);
 }
 
-@media (max-width: 700px) {
-  .header-inner {
-    align-items: flex-start;
-    flex-direction: column;
-    padding: 14px 0;
+.tile:hover .tile-inner,
+.tile:focus-visible .tile-inner,
+.tile.is-flipped .tile-inner {
+  transform: rotateY(180deg);
+}
+
+.tile-face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+}
+
+.tile-front {
+  background: var(--tile-color, #efefef);
+}
+
+.tile-back {
+  transform: rotateY(180deg);
+  background: #e8e8e8;
+}
+
+.tile-back img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  filter: grayscale(100%);
+}
+
+.tile-empty {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(130deg, #fdfdfd, #d8d8d8);
+}
+
+.tile:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+  z-index: 2;
+}
+
+.tile:nth-child(n + 97) {
+  display: none;
+}
+
+.tile-number {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  z-index: 3;
+  color: rgba(17, 24, 39, 0.42);
+  font-size: clamp(0.46rem, 0.7vw, 0.68rem);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  pointer-events: none;
+  user-select: none;
+}
+
+@media (max-width: 1024px) {
+  :root {
+    --grid-columns: 8;
+    --grid-rows: 6;
+    --visible-tiles: 48;
   }
 
-  .nav-list {
-    flex-wrap: wrap;
-    gap: 12px;
+  .tile:nth-child(n + 49) {
+    display: none;
+  }
+}
+
+@media (max-width: 640px) {
+  :root {
+    --grid-columns: 4;
+    --grid-rows: 6;
+    --visible-tiles: 24;
+    --viewport-padding: clamp(8px, 3vmin, 20px);
   }
 
-  .hero {
-    padding-top: 54px;
+  .tile:nth-child(n + 25) {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tile-inner {
+    transition: none;
+    transition-delay: 0ms;
   }
 }
