@@ -1,26 +1,29 @@
-const GRID_COLUMNS = 12;
-const GRID_ROWS = 12;
-const TOTAL_TILES = GRID_COLUMNS * GRID_ROWS;
+const DESKTOP_COLUMNS = 12;
+const MAX_GRID_ROWS = 12;
+const TOTAL_TILES = DESKTOP_COLUMNS * MAX_GRID_ROWS;
 
 const palette = ["#ffffff", "#f6f6f6", "#ececec", "#e2e2e2", "#d8d8d8", "#cecece"];
 
 const featuredTiles = [
   {
-    id: 18,
+    id: 6,
+    projectId: "detaljplaner",
     color: "#d8d8d8",
     image: "assets/images/grid/detaljplaner.jpg",
     href: "portfolio/detaljplaner/",
     label: "Detaljplaner"
   },
   {
-    id: 67,
+    id: 14,
+    projectId: "projects",
     color: "#e2e2e2",
     image: "assets/images/grid/projects.jpg",
     href: "portfolio/projects/",
     label: "Projects"
   },
   {
-    id: 122,
+    id: 22,
+    projectId: "rosengard",
     color: "#cecece",
     image: "assets/images/grid/rosengard.jpg",
     href: "portfolio/rosengard/",
@@ -30,6 +33,20 @@ const featuredTiles = [
 
 const featuredMap = new Map(featuredTiles.map((tile) => [tile.id, tile]));
 const gridEl = document.getElementById("pixel-grid");
+const tileRegistry = new Map();
+
+function formatTileId(id) {
+  return String(id).padStart(3, "0");
+}
+
+function getVisibleTiles(tiles) {
+  return tiles.filter((tile) => window.getComputedStyle(tile).display !== "none");
+}
+
+function getCurrentColumnCount() {
+  const value = window.getComputedStyle(gridEl).getPropertyValue("--grid-columns");
+  return Number.parseInt(value, 10) || DESKTOP_COLUMNS;
+}
 
 function shuffle(array) {
   const clone = [...array];
@@ -54,17 +71,22 @@ function attachRippleHoverEffect(tiles) {
     });
   };
 
-  tiles.forEach((tile, tileIndex) => {
+  tiles.forEach((tile) => {
     tile.addEventListener("mouseenter", () => {
       resetTiles();
 
-      const originRow = Math.floor(tileIndex / GRID_COLUMNS);
-      const originCol = tileIndex % GRID_COLUMNS;
+      const visibleTiles = getVisibleTiles(tiles);
+      const tileIndex = visibleTiles.indexOf(tile);
+      if (tileIndex === -1) return;
+
+      const currentColumns = getCurrentColumnCount();
+      const originRow = Math.floor(tileIndex / currentColumns);
+      const originCol = tileIndex % currentColumns;
 
       const nearby = [];
-      tiles.forEach((candidate, candidateIndex) => {
-        const row = Math.floor(candidateIndex / GRID_COLUMNS);
-        const col = candidateIndex % GRID_COLUMNS;
+      visibleTiles.forEach((candidate, candidateIndex) => {
+        const row = Math.floor(candidateIndex / currentColumns);
+        const col = candidateIndex % currentColumns;
         const distance = Math.abs(originRow - row) + Math.abs(originCol - col);
 
         if (distance <= maxDistance) {
@@ -110,8 +132,10 @@ if (gridEl) {
   const fragment = document.createDocumentFragment();
 
   for (let id = 1; id <= TOTAL_TILES; id += 1) {
+    const tileId = formatTileId(id);
     const tile = featuredMap.get(id) ?? {
       id,
+      projectId: "",
       color: palette[id % palette.length],
       image: "",
       href: "",
@@ -122,13 +146,24 @@ if (gridEl) {
     const wrapperTag = isLink ? "a" : "div";
     const wrapper = document.createElement(wrapperTag);
 
+    wrapper.id = `tile-${tileId}`;
     wrapper.className = `tile${isLink ? " tile--link" : ""}`;
+    wrapper.dataset.tileId = tileId;
+    wrapper.dataset.projectId = tile.projectId || "";
+    wrapper.dataset.imageSrc = tile.image || "";
     wrapper.style.setProperty("--tile-color", tile.color);
     wrapper.setAttribute("role", "listitem");
 
+    tileRegistry.set(tileId, {
+      element: wrapper,
+      projectId: wrapper.dataset.projectId,
+      imageSrc: wrapper.dataset.imageSrc,
+      href: tile.href || ""
+    });
+
     if (isLink) {
       wrapper.href = tile.href;
-      wrapper.setAttribute("aria-label", `Öppna ${tile.label}`);
+      wrapper.setAttribute("aria-label", `Öppna ${tile.label} (${tileId})`);
     } else {
       wrapper.setAttribute("aria-hidden", "true");
       wrapper.tabIndex = -1;
@@ -145,11 +180,13 @@ if (gridEl) {
           ${imageMarkup}
         </span>
       </span>
+      <span class="tile-number" aria-hidden="true">${tileId}</span>
     `;
 
     fragment.appendChild(wrapper);
   }
 
   gridEl.appendChild(fragment);
+  gridEl.tileRegistry = tileRegistry;
   attachRippleHoverEffect(Array.from(gridEl.children));
 }

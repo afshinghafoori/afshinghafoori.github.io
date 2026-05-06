@@ -4,6 +4,7 @@
   --tile-border: rgba(0, 0, 0, 0.08);
   --focus: #111827;
   --grid-columns: 12;
+  --visible-tiles: 96;
 }
 
 * {
@@ -101,10 +102,47 @@ body {
   z-index: 2;
 }
 
-@media (max-width: 780px) {
+.tile:nth-child(n + 97) {
+  display: none;
+}
+
+.tile-number {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  z-index: 3;
+  color: rgba(17, 24, 39, 0.42);
+  font-size: clamp(0.46rem, 0.7vw, 0.68rem);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  pointer-events: none;
+  user-select: none;
+}
+
+@media (max-width: 1024px) {
+  :root {
+    --grid-columns: 8;
+    --visible-tiles: 48;
+  }
+
+  .tile:nth-child(n + 49) {
+    display: none;
+  }
+}
+
+@media (max-width: 640px) {
+  :root {
+    --grid-columns: 4;
+    --visible-tiles: 24;
+  }
+
   .landing {
     width: 100vw;
     padding: 8px;
+  }
+
+  .tile:nth-child(n + 25) {
+    display: none;
   }
 }
 
