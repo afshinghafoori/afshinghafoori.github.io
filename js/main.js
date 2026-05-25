@@ -34,6 +34,7 @@ const gridProjects = [
     id: 69,
     projectId: "amman",
     color: "#d8d8d8",
+    frontImageName: "Amman_Moneyshot_Grey.webp",
     imageName: "Amman_Moneyshot.webp",
     href: "",
     label: "Amman"
@@ -46,6 +47,7 @@ function getGridImagePath(imageName) {
 
 const featuredTiles = gridProjects.map((project) => ({
   ...project,
+  frontImage: getGridImagePath(project.frontImageName),
   image: getGridImagePath(project.imageName)
 }));
 
@@ -155,6 +157,7 @@ if (gridEl) {
       id,
       projectId: "",
       color: palette[id % palette.length],
+      frontImage: "",
       image: "",
       href: "",
       label: "Dekorativ ruta"
@@ -187,13 +190,17 @@ if (gridEl) {
       wrapper.tabIndex = -1;
     }
 
+    const frontImageMarkup = tile.frontImage
+      ? `<img class="tile-front-image" src="${tile.frontImage}" alt="" loading="lazy" decoding="async">`
+      : "";
+
     const imageMarkup = tile.image
       ? `<img src="${tile.image}" alt="" loading="lazy" decoding="async">`
       : '<div class="tile-empty" aria-hidden="true"></div>';
 
     wrapper.innerHTML = `
       <span class="tile-inner">
-        <span class="tile-face tile-front" aria-hidden="true"></span>
+        <span class="tile-face tile-front" aria-hidden="true">${frontImageMarkup}</span>
         <span class="tile-face tile-back" aria-hidden="true">
           ${imageMarkup}
         </span>
