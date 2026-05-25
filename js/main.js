@@ -29,6 +29,14 @@ const gridProjects = [
     imageName: "rosengard.jpg",
     href: "portfolio/rosengard/",
     label: "Rosengård"
+  },
+  {
+    id: 69,
+    projectId: "amman",
+    color: "#d8d8d8",
+    imageName: "Amman_Moneyshot.webp",
+    href: "",
+    label: "Amman"
   }
 ];
 
