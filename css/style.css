@@ -94,6 +94,15 @@ body {
   background: var(--tile-color, #efefef);
 }
 
+.tile-front-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  opacity: 0.8;
+  transform: scaleX(-1);
+}
+
 .tile-back {
   transform: rotateY(180deg);
   background: #e8e8e8;
