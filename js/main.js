@@ -1,7 +1,7 @@
 const DESKTOP_COLUMNS = 12;
 const MAX_GRID_ROWS = 12;
 const TOTAL_TILES = DESKTOP_COLUMNS * MAX_GRID_ROWS;
-const GRID_IMAGE_DIR = "assets/images/grid";
+const GRID_IMAGE_DIR = "images/grid";
 
 const palette = ["#ffffff", "#f6f6f6", "#ececec", "#e2e2e2", "#d8d8d8", "#cecece"];
 
