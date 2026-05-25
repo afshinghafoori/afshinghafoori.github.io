@@ -1,15 +1,16 @@
 const DESKTOP_COLUMNS = 12;
 const MAX_GRID_ROWS = 12;
 const TOTAL_TILES = DESKTOP_COLUMNS * MAX_GRID_ROWS;
+const GRID_IMAGE_DIR = "assets/images/grid";
 
 const palette = ["#ffffff", "#f6f6f6", "#ececec", "#e2e2e2", "#d8d8d8", "#cecece"];
 
-const featuredTiles = [
+const gridProjects = [
   {
     id: 6,
     projectId: "detaljplaner",
     color: "#d8d8d8",
-    image: "assets/images/grid/detaljplaner.jpg",
+    imageName: "detaljplaner.jpg",
     href: "portfolio/detaljplaner/",
     label: "Detaljplaner"
   },
@@ -17,7 +18,7 @@ const featuredTiles = [
     id: 14,
     projectId: "projects",
     color: "#e2e2e2",
-    image: "assets/images/grid/projects.jpg",
+    imageName: "projects.jpg",
     href: "portfolio/projects/",
     label: "Projects"
   },
@@ -25,11 +26,20 @@ const featuredTiles = [
     id: 22,
     projectId: "rosengard",
     color: "#cecece",
-    image: "assets/images/grid/rosengard.jpg",
+    imageName: "rosengard.jpg",
     href: "portfolio/rosengard/",
     label: "Rosengård"
   }
 ];
+
+function getGridImagePath(imageName) {
+  return imageName ? `${GRID_IMAGE_DIR}/${imageName}` : "";
+}
+
+const featuredTiles = gridProjects.map((project) => ({
+  ...project,
+  image: getGridImagePath(project.imageName)
+}));
 
 const featuredMap = new Map(featuredTiles.map((tile) => [tile.id, tile]));
 const gridEl = document.getElementById("pixel-grid");
