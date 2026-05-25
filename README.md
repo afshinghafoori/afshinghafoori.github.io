@@ -4,9 +4,33 @@ Personlig portfolio byggd för GitHub Pages.
 
 ## Struktur
 
-- `index.html` – Semantisk sidstruktur (hero, om mig, projekt, kompetenser, kontakt).
-- `css/style.css` – Responsiv layout med modern kortdesign och navigering.
-- `js/main.js` – Enkel klientlogik (aktuellt år i footer).
+- `index.html` - startsidan med den interaktiva pixel-gridden.
+- `css/style.css` - responsiv layout och grid-styling.
+- `js/main.js` - bygger pixel-gridden och kopplar projekt till bilder/länkar.
+- `assets/images/grid/` - bilder som används av pixel-gridden på startsidan.
+- `portfolio/` - projektsidor som grid-rutorna länkar till.
+
+## Grid-bilder
+
+Grid-bilder för startsidan ska ligga i `assets/images/grid/`. I `js/main.js` anges bara filnamnet i `imageName`, och koden bygger hela sökvägen från `GRID_IMAGE_DIR`.
+
+Exempel:
+
+```js
+{
+  id: 6,
+  projectId: "detaljplaner",
+  imageName: "detaljplaner.jpg",
+  href: "portfolio/detaljplaner/",
+  label: "Detaljplaner"
+}
+```
+
+Det betyder att filen ska ligga här:
+
+```text
+assets/images/grid/detaljplaner.jpg
+```
 
 ## Lokal utveckling
 
