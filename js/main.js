@@ -45,6 +45,14 @@ const gridProjects = [
     imageName: "Amman_Moneyshot.webp",
     href: "",
     label: "Amman"
+  },
+  {
+    id: 82,
+    projectId: "amman",
+    color: "#d8d8d8",
+    imageName: "Amman_Moneyshot2.webp",
+    href: "",
+    label: "Amman"
   }
 ];
 
