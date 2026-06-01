@@ -31,7 +31,7 @@ const gridProjects = [
     label: "Rosengård"
   },
   {
-    id: 23,
+    id: 72,
     projectId: "amman",
     color: "#d8d8d8",
     imageName: "Tower Diagram2.webp",
@@ -39,7 +39,7 @@ const gridProjects = [
     label: "Amman"
   },
   {
-    id: 35,
+    id: 84,
     projectId: "amman",
     color: "#d8d8d8",
     imageName: "Tower Diagram1.webp",
@@ -47,7 +47,7 @@ const gridProjects = [
     label: "Amman"
   },
   {
-    id: 47,
+    id: 96,
     projectId: "amman",
     color: "#d8d8d8",
     imageName: "Tower Diagram.webp",
