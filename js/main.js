@@ -141,13 +141,16 @@ function attachRippleHoverEffect(tiles) {
       const originRow = Math.floor(tileIndex / currentColumns);
       const originCol = tileIndex % currentColumns;
 
+      const projectId = tile.dataset.projectId;
       const nearby = [];
       visibleTiles.forEach((candidate, candidateIndex) => {
         const row = Math.floor(candidateIndex / currentColumns);
         const col = candidateIndex % currentColumns;
         const distance = Math.abs(originRow - row) + Math.abs(originCol - col);
+        const isProjectClusterTile = projectId && candidate.dataset.projectId === projectId;
+        const isNearbyEmptyTile = !projectId && distance <= maxDistance;
 
-        if (distance <= maxDistance) {
+        if (isProjectClusterTile || isNearbyEmptyTile) {
           nearby.push({ candidate, distance, candidateIndex });
         }
       });
