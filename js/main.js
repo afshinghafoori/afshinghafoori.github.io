@@ -31,6 +31,30 @@ const gridProjects = [
     label: "Rosengård"
   },
   {
+    id: 23,
+    projectId: "amman",
+    color: "#d8d8d8",
+    imageName: "Tower Diagram2.webp",
+    href: "",
+    label: "Amman"
+  },
+  {
+    id: 35,
+    projectId: "amman",
+    color: "#d8d8d8",
+    imageName: "Tower Diagram1.webp",
+    href: "",
+    label: "Amman"
+  },
+  {
+    id: 47,
+    projectId: "amman",
+    color: "#d8d8d8",
+    imageName: "Tower Diagram.webp",
+    href: "",
+    label: "Amman"
+  },
+  {
     id: 36,
     projectId: "amman",
     color: "#d8d8d8",
