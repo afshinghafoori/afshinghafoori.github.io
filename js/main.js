@@ -101,6 +101,30 @@ const gridProjects = [
     imageName: "Amman_Moneyshot2.webp",
     href: "",
     label: "Amman"
+  },
+  {
+    id: 80,
+    projectId: "lanzarote",
+    color: "#d8d8d8",
+    imageName: "LanzaroteMoneyshot1.webp",
+    href: "",
+    label: "Lanzarote"
+  },
+  {
+    id: 67,
+    projectId: "lanzarote",
+    color: "#d8d8d8",
+    imageName: "LanzaroteMoneyshot2.webp",
+    href: "",
+    label: "Lanzarote"
+  },
+  {
+    id: 55,
+    projectId: "lanzarote",
+    color: "#d8d8d8",
+    imageName: "LanzaroteMoneyshot3.webp",
+    href: "",
+    label: "Lanzarote"
   }
 ];
 
