@@ -125,6 +125,22 @@ const gridProjects = [
     imageName: "LanzaroteMoneyshot3.webp",
     href: "",
     label: "Lanzarote"
+  },
+  {
+    id: 90,
+    projectId: "lanzarote",
+    color: "#d8d8d8",
+    imageName: "LanzaroteMoneyshot_Landscape.webp",
+    href: "",
+    label: "Lanzarote"
+  },
+  {
+    id: 91,
+    projectId: "lanzarote",
+    color: "#d8d8d8",
+    imageName: "LanzaroteMoneyshot_Landscape1.webp",
+    href: "",
+    label: "Lanzarote"
   }
 ];
 
