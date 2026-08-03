@@ -82,7 +82,7 @@ const gridProjects = [
     id: 58,
     projectId: "amman",
     color: "#d8d8d8",
-    imageName: "Amman_Moneyshot1.webp",
+    imageName: "AmmanMoneyshot1.webp",
     href: "",
     label: "Amman"
   },
@@ -90,7 +90,7 @@ const gridProjects = [
     id: 82,
     projectId: "amman",
     color: "#d8d8d8",
-    imageName: "Amman_Moneyshot.webp",
+    imageName: "AmmanMoneyshot.webp",
     href: "",
     label: "Amman"
   },
@@ -98,7 +98,7 @@ const gridProjects = [
     id: 71,
     projectId: "amman",
     color: "#d8d8d8",
-    imageName: "Amman_Moneyshot2.webp",
+    imageName: "AmmanMoneyshot2.webp",
     href: "",
     label: "Amman"
   },
