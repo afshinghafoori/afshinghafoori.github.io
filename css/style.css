@@ -6,6 +6,7 @@
   --grid-columns: 12;
   --grid-rows: 8;
   --visible-tiles: 96;
+  --grid-gap: 0.923077px;
   --viewport-padding: clamp(12px, 3vmin, 32px);
 }
 
@@ -52,7 +53,8 @@ body {
   width: 100%;
   display: grid;
   grid-template-columns: repeat(var(--grid-columns), minmax(0, 1fr));
-  gap: 1.5px;
+  gap: var(--grid-gap);
+  padding: var(--grid-gap);
 }
 
 .tile {
