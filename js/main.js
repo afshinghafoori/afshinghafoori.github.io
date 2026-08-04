@@ -253,6 +253,114 @@ function attachRippleHoverEffect(tiles) {
   });
 }
 
+function attachTileExpandEffect(tiles) {
+  let expandedTile = null;
+
+  const getPixelValue = (value) => Number.parseFloat(value) || 0;
+
+  const expandTile = (tile) => {
+    const inner = tile.querySelector(".tile-inner");
+    const front = tile.querySelector(".tile-front");
+    const back = tile.querySelector(".tile-back");
+    const number = tile.querySelector(".tile-number");
+    if (!inner) return;
+
+    const tileRect = tile.getBoundingClientRect();
+    const gridStyles = window.getComputedStyle(gridEl);
+    const columnGap = getPixelValue(gridStyles.columnGap);
+    const rowGap = getPixelValue(gridStyles.rowGap);
+
+    tile.classList.remove("is-flipped");
+    tile.classList.add("is-expanded");
+    tile.setAttribute("aria-pressed", "true");
+    tile.style.zIndex = "12";
+
+    inner.style.width = `${(tileRect.width * 3) + (columnGap * 2)}px`;
+    inner.style.height = `${(tileRect.height * 3) + (rowGap * 2)}px`;
+    inner.style.left = `-${tileRect.width + columnGap}px`;
+    inner.style.top = `-${tileRect.height + rowGap}px`;
+    inner.style.boxShadow = "0 18px 48px rgba(0, 0, 0, 0.24)";
+    inner.style.transition = "width 550ms cubic-bezier(0.2, 0.65, 0.2, 1), height 550ms cubic-bezier(0.2, 0.65, 0.2, 1), left 550ms cubic-bezier(0.2, 0.65, 0.2, 1), top 550ms cubic-bezier(0.2, 0.65, 0.2, 1), box-shadow 550ms cubic-bezier(0.2, 0.65, 0.2, 1)";
+    inner.style.transform = "none";
+
+    if (front) {
+      front.style.display = "none";
+    }
+
+    if (back) {
+      back.style.transform = "none";
+    }
+
+    if (number) {
+      number.style.opacity = "0";
+    }
+
+    expandedTile = tile;
+  };
+
+  const collapseExpandedTile = () => {
+    if (!expandedTile) return;
+    const inner = expandedTile.querySelector(".tile-inner");
+    const front = expandedTile.querySelector(".tile-front");
+    const back = expandedTile.querySelector(".tile-back");
+    const number = expandedTile.querySelector(".tile-number");
+
+    expandedTile.classList.remove("is-expanded");
+    expandedTile.setAttribute("aria-pressed", "false");
+    expandedTile.style.zIndex = "";
+
+    if (inner) {
+      inner.style.width = "";
+      inner.style.height = "";
+      inner.style.left = "";
+      inner.style.top = "";
+      inner.style.boxShadow = "";
+      inner.style.transition = "";
+      inner.style.transform = "";
+    }
+
+    if (front) {
+      front.style.display = "";
+    }
+
+    if (back) {
+      back.style.transform = "";
+    }
+
+    if (number) {
+      number.style.opacity = "";
+    }
+
+    expandedTile = null;
+  };
+
+  tiles.forEach((tile) => {
+    if (!tile.dataset.projectId || !tile.dataset.imageSrc) return;
+
+    tile.addEventListener("click", (event) => {
+      event.preventDefault();
+      const isExpanded = tile === expandedTile;
+      collapseExpandedTile();
+
+      if (!isExpanded) {
+        expandTile(tile);
+      }
+    });
+
+    tile.addEventListener("keydown", (event) => {
+      if (event.key !== "Enter" && event.key !== " ") return;
+      event.preventDefault();
+      tile.click();
+    });
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") {
+      collapseExpandedTile();
+    }
+  });
+}
+
 if (gridEl) {
   const fragment = document.createDocumentFragment();
 
@@ -272,12 +380,16 @@ if (gridEl) {
     const wrapper = document.createElement(wrapperTag);
 
     wrapper.id = `tile-${tileId}`;
-    wrapper.className = `tile${isLink ? " tile--link" : ""}`;
+    wrapper.className = `tile${isLink ? " tile--link" : ""}${tile.projectId && tile.image ? " tile--project" : ""}`;
     wrapper.dataset.tileId = tileId;
     wrapper.dataset.projectId = tile.projectId || "";
     wrapper.dataset.imageSrc = tile.image || "";
     wrapper.style.setProperty("--tile-color", tile.color);
     wrapper.setAttribute("role", "listitem");
+
+    if (tile.projectId && tile.image) {
+      wrapper.style.cursor = "zoom-in";
+    }
 
     tileRegistry.set(tileId, {
       element: wrapper,
@@ -289,6 +401,11 @@ if (gridEl) {
     if (isLink) {
       wrapper.href = tile.href;
       wrapper.setAttribute("aria-label", `Öppna ${tile.label} (${tileId})`);
+    } else if (tile.projectId && tile.image) {
+      wrapper.setAttribute("aria-label", `Förstora ${tile.label} (${tileId})`);
+      wrapper.setAttribute("aria-pressed", "false");
+      wrapper.setAttribute("role", "button");
+      wrapper.tabIndex = 0;
     } else {
       wrapper.setAttribute("aria-hidden", "true");
       wrapper.tabIndex = -1;
@@ -313,5 +430,7 @@ if (gridEl) {
 
   gridEl.appendChild(fragment);
   gridEl.tileRegistry = tileRegistry;
-  attachRippleHoverEffect(Array.from(gridEl.children));
+  const tiles = Array.from(gridEl.children);
+  attachRippleHoverEffect(tiles);
+  attachTileExpandEffect(tiles);
 }
