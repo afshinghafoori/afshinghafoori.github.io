@@ -2,6 +2,7 @@ const DESKTOP_COLUMNS = 12;
 const MAX_GRID_ROWS = 12;
 const TOTAL_TILES = DESKTOP_COLUMNS * MAX_GRID_ROWS;
 const GRID_IMAGE_DIR = "grid";
+const AMMAN_PROJECT_PATH = "portfolio/architecture/Creative%20Competition%20-%20Amman%20hospital/";
 
 const palette = ["#ffffff", "#f6f6f6", "#ececec", "#e2e2e2", "#d8d8d8", "#cecece"];
 
@@ -83,15 +84,15 @@ const gridProjects = [
     projectId: "amman",
     color: "#d8d8d8",
     imageName: "AmmanMoneyshot1.webp",
-    href: "",
+    href: AMMAN_PROJECT_PATH,
     label: "Amman"
   },
   {
     id: 82,
     projectId: "amman",
     color: "#d8d8d8",
-    imageName: "AmmanMoneyshot.webp",
-    href: "",
+    imageName: "AmmanMoneyshot (rev).webp",
+    href: AMMAN_PROJECT_PATH,
     label: "Amman"
   },
   {
@@ -99,7 +100,7 @@ const gridProjects = [
     projectId: "amman",
     color: "#d8d8d8",
     imageName: "AmmanMoneyshot2.webp",
-    href: "",
+    href: AMMAN_PROJECT_PATH,
     label: "Amman"
   },
   {
@@ -146,6 +147,10 @@ const gridProjects = [
 
 function getGridImagePath(imageName) {
   return imageName ? `${GRID_IMAGE_DIR}/${imageName}` : "";
+}
+
+function getImageNameFromPath(imagePath) {
+  return imagePath.split("/").pop() || "";
 }
 
 const featuredTiles = gridProjects.map((project) => ({
@@ -255,6 +260,7 @@ function attachRippleHoverEffect(tiles) {
 
 function attachTileExpandEffect(tiles) {
   let expandedTile = null;
+  let isOpeningProject = false;
 
   const getPixelValue = (value) => Number.parseFloat(value) || 0;
 
@@ -298,6 +304,76 @@ function attachTileExpandEffect(tiles) {
     expandedTile = tile;
   };
 
+  const getProjectOriginRect = () => {
+    const gridRect = gridEl.getBoundingClientRect();
+    const gridStyles = window.getComputedStyle(gridEl);
+    const gap = getPixelValue(gridStyles.columnGap);
+    const paddingLeft = getPixelValue(gridStyles.paddingLeft);
+    const paddingTop = getPixelValue(gridStyles.paddingTop);
+    const tileSize = (gridEl.clientWidth - (paddingLeft * 2) - ((getCurrentColumnCount() - 1) * gap)) / getCurrentColumnCount();
+
+    return {
+      left: gridRect.left + paddingLeft,
+      top: gridRect.top + paddingTop,
+      width: (tileSize * 3) + (gap * 2),
+      height: (tileSize * 3) + (gap * 2)
+    };
+  };
+
+  const waitForTileTransition = (inner, fallbackMs = 700) => new Promise((resolve) => {
+    let isResolved = false;
+
+    const finish = () => {
+      if (isResolved) return;
+      isResolved = true;
+      inner.removeEventListener("transitionend", handleTransitionEnd);
+      window.clearTimeout(timer);
+      resolve();
+    };
+
+    const handleTransitionEnd = (event) => {
+      if (event.target === inner && (event.propertyName === "left" || event.propertyName === "top")) {
+        finish();
+      }
+    };
+
+    const timer = window.setTimeout(finish, fallbackMs);
+    inner.addEventListener("transitionend", handleTransitionEnd);
+  });
+
+  const moveExpandedTileToProjectOrigin = (tile) => {
+    const inner = tile.querySelector(".tile-inner");
+    if (!inner) return Promise.resolve();
+
+    const tileRect = tile.getBoundingClientRect();
+    const targetRect = getProjectOriginRect();
+
+    inner.style.width = `${targetRect.width}px`;
+    inner.style.height = `${targetRect.height}px`;
+    inner.style.left = `${targetRect.left - tileRect.left}px`;
+    inner.style.top = `${targetRect.top - tileRect.top}px`;
+    inner.style.boxShadow = "0 18px 48px rgba(0, 0, 0, 0.22)";
+    inner.style.transition = "width 700ms cubic-bezier(0.16, 0.72, 0.18, 1), height 700ms cubic-bezier(0.16, 0.72, 0.18, 1), left 700ms cubic-bezier(0.16, 0.72, 0.18, 1), top 700ms cubic-bezier(0.16, 0.72, 0.18, 1), box-shadow 700ms cubic-bezier(0.16, 0.72, 0.18, 1)";
+
+    return waitForTileTransition(inner);
+  };
+
+  const openExpandedTileProject = async (tile) => {
+    const href = tile.dataset.projectHref;
+    if (!href) return false;
+
+    await moveExpandedTileToProjectOrigin(tile);
+
+    const url = new URL(href, window.location.href);
+    const imageName = getImageNameFromPath(tile.dataset.imageSrc || "");
+    if (imageName) {
+      url.searchParams.set("image", imageName);
+    }
+
+    window.location.href = url.href;
+    return true;
+  };
+
   const collapseExpandedTile = () => {
     if (!expandedTile) return;
     const inner = expandedTile.querySelector(".tile-inner");
@@ -339,7 +415,16 @@ function attachTileExpandEffect(tiles) {
 
     tile.addEventListener("click", (event) => {
       event.preventDefault();
+      if (isOpeningProject) return;
+
       const isExpanded = tile === expandedTile;
+
+      if (isExpanded && tile.dataset.projectHref) {
+        isOpeningProject = true;
+        openExpandedTileProject(tile);
+        return;
+      }
+
       collapseExpandedTile();
 
       if (!isExpanded) {
@@ -375,7 +460,8 @@ if (gridEl) {
       label: "Dekorativ ruta"
     };
 
-    const isLink = Boolean(tile.href);
+    const opensProjectAfterExpand = Boolean(tile.projectId === "amman" && tile.image && tile.href);
+    const isLink = Boolean(tile.href && !opensProjectAfterExpand);
     const wrapperTag = isLink ? "a" : "div";
     const wrapper = document.createElement(wrapperTag);
 
@@ -384,6 +470,7 @@ if (gridEl) {
     wrapper.dataset.tileId = tileId;
     wrapper.dataset.projectId = tile.projectId || "";
     wrapper.dataset.imageSrc = tile.image || "";
+    wrapper.dataset.projectHref = tile.href || "";
     wrapper.style.setProperty("--tile-color", tile.color);
     wrapper.setAttribute("role", "listitem");
 
