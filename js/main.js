@@ -362,15 +362,18 @@ function attachTileExpandEffect(tiles) {
     const href = tile.dataset.projectHref;
     if (!href) return false;
 
-    await moveExpandedTileToProjectOrigin(tile);
-
     const url = new URL(href, window.location.href);
     const imageName = getImageNameFromPath(tile.dataset.imageSrc || "");
     if (imageName) {
       url.searchParams.set("image", imageName);
     }
 
-    window.location.href = url.href;
+    try {
+      await moveExpandedTileToProjectOrigin(tile);
+    } finally {
+      window.location.assign(url.href);
+    }
+
     return true;
   };
 
