@@ -3,6 +3,11 @@ const MAX_GRID_ROWS = 12;
 const TOTAL_TILES = DESKTOP_COLUMNS * MAX_GRID_ROWS;
 const GRID_IMAGE_DIR = "grid";
 const AMMAN_PROJECT_PATH = "portfolio/architecture/Creative%20Competition%20-%20Amman%20hospital/";
+const PROJECT_ASSET_VERSION = "20260821e";
+const TILE_MOTION_DURATION_MS = 700;
+const TILE_MOTION_EASING = "cubic-bezier(0.16, 0.72, 0.18, 1)";
+const TILE_MOTION_TRANSITION = `width ${TILE_MOTION_DURATION_MS}ms ${TILE_MOTION_EASING}, height ${TILE_MOTION_DURATION_MS}ms ${TILE_MOTION_EASING}, left ${TILE_MOTION_DURATION_MS}ms ${TILE_MOTION_EASING}, top ${TILE_MOTION_DURATION_MS}ms ${TILE_MOTION_EASING}, box-shadow ${TILE_MOTION_DURATION_MS}ms ${TILE_MOTION_EASING}`;
+const TILE_FLIP_TRANSITION = `transform ${TILE_MOTION_DURATION_MS}ms ${TILE_MOTION_EASING}`;
 
 const palette = ["#ffffff", "#f6f6f6", "#ececec", "#e2e2e2", "#d8d8d8", "#cecece"];
 
@@ -32,7 +37,7 @@ const gridProjects = [
     label: "Rosengård"
   },
   {
-    id: 72,
+    id: 84,
     projectId: "amman",
     color: "#d8d8d8",
     imageName: "Tower Diagram2.webp",
@@ -40,7 +45,7 @@ const gridProjects = [
     label: "Amman"
   },
   {
-    id: 84,
+    id: 96,
     projectId: "amman",
     color: "#d8d8d8",
     imageName: "Tower Diagram1.webp",
@@ -48,15 +53,7 @@ const gridProjects = [
     label: "Amman"
   },
   {
-    id: 96,
-    projectId: "amman",
-    color: "#d8d8d8",
-    imageName: "Tower Diagram.webp",
-    href: "",
-    label: "Amman"
-  },
-  {
-    id: 36,
+    id: 48,
     projectId: "amman",
     color: "#d8d8d8",
     imageName: "Amman_Section2.webp",
@@ -64,7 +61,7 @@ const gridProjects = [
     label: "Amman"
   },
   {
-    id: 48,
+    id: 60,
     projectId: "amman",
     color: "#d8d8d8",
     imageName: "Amman_Section1.webp",
@@ -72,7 +69,7 @@ const gridProjects = [
     label: "Amman"
   },
   {
-    id: 60,
+    id: 72,
     projectId: "amman",
     color: "#d8d8d8",
     imageName: "Amman_Section.webp",
@@ -83,7 +80,7 @@ const gridProjects = [
     id: 58,
     projectId: "amman",
     color: "#d8d8d8",
-    imageName: "AmmanMoneyshot1.webp",
+    imageName: "Amman_Moneyshot1_grid.webp",
     href: AMMAN_PROJECT_PATH,
     label: "Amman"
   },
@@ -91,7 +88,7 @@ const gridProjects = [
     id: 82,
     projectId: "amman",
     color: "#d8d8d8",
-    imageName: "AmmanMoneyshot (rev).webp",
+    imageName: "Amman_Moneyshot_grid.webp",
     href: AMMAN_PROJECT_PATH,
     label: "Amman"
   },
@@ -99,7 +96,7 @@ const gridProjects = [
     id: 71,
     projectId: "amman",
     color: "#d8d8d8",
-    imageName: "AmmanMoneyshot2.webp",
+    imageName: "Amman_Moneyshot2_grid.webp",
     href: AMMAN_PROJECT_PATH,
     label: "Amman"
   },
@@ -151,6 +148,48 @@ function getGridImagePath(imageName) {
 
 function getImageNameFromPath(imagePath) {
   return imagePath.split("/").pop() || "";
+}
+
+function loadStylesheetOnce(href) {
+  if (document.querySelector(`link[href="${href}"]`)) {
+    return Promise.resolve();
+  }
+
+  return new Promise((resolve, reject) => {
+    const link = document.createElement("link");
+    link.rel = "stylesheet";
+    link.href = href;
+    link.addEventListener("load", resolve, { once: true });
+    link.addEventListener("error", reject, { once: true });
+    document.head.appendChild(link);
+  });
+}
+
+function loadScriptOnce(src) {
+  if (window.renderProjectGrid || document.querySelector(`script[src="${src}"]`)) {
+    return Promise.resolve();
+  }
+
+  return new Promise((resolve, reject) => {
+    const script = document.createElement("script");
+    script.src = src;
+    script.addEventListener("load", resolve, { once: true });
+    script.addEventListener("error", reject, { once: true });
+    document.body.appendChild(script);
+  });
+}
+
+async function ensureProjectRenderer() {
+  await Promise.all([
+    loadStylesheetOnce(`/css/project.css?v=${PROJECT_ASSET_VERSION}`),
+    loadScriptOnce(`/js/project.js?v=${PROJECT_ASSET_VERSION}`)
+  ]);
+}
+
+function restoreLandingView() {
+  document.querySelector(".project-page")?.remove();
+  document.querySelector(".landing")?.removeAttribute("hidden");
+  renderLandingGrid();
 }
 
 const featuredTiles = gridProjects.map((project) => ({
@@ -258,6 +297,10 @@ function attachRippleHoverEffect(tiles) {
   });
 }
 
+window.addEventListener("popstate", () => {
+  restoreLandingView();
+});
+
 function attachTileExpandEffect(tiles) {
   let expandedTile = null;
   let isOpeningProject = false;
@@ -286,7 +329,7 @@ function attachTileExpandEffect(tiles) {
     inner.style.left = `-${tileRect.width + columnGap}px`;
     inner.style.top = `-${tileRect.height + rowGap}px`;
     inner.style.boxShadow = "0 18px 48px rgba(0, 0, 0, 0.24)";
-    inner.style.transition = "width 550ms cubic-bezier(0.2, 0.65, 0.2, 1), height 550ms cubic-bezier(0.2, 0.65, 0.2, 1), left 550ms cubic-bezier(0.2, 0.65, 0.2, 1), top 550ms cubic-bezier(0.2, 0.65, 0.2, 1), box-shadow 550ms cubic-bezier(0.2, 0.65, 0.2, 1)";
+    inner.style.transition = TILE_MOTION_TRANSITION;
     inner.style.transform = "none";
 
     if (front) {
@@ -320,7 +363,7 @@ function attachTileExpandEffect(tiles) {
     };
   };
 
-  const waitForTileTransition = (inner, fallbackMs = 700) => new Promise((resolve) => {
+  const waitForTileTransition = (inner, fallbackMs = TILE_MOTION_DURATION_MS + 100) => new Promise((resolve) => {
     let isResolved = false;
 
     const finish = () => {
@@ -348,14 +391,37 @@ function attachTileExpandEffect(tiles) {
     const tileRect = tile.getBoundingClientRect();
     const targetRect = getProjectOriginRect();
 
+    tile.classList.add("is-project-transfer");
     inner.style.width = `${targetRect.width}px`;
     inner.style.height = `${targetRect.height}px`;
     inner.style.left = `${targetRect.left - tileRect.left}px`;
     inner.style.top = `${targetRect.top - tileRect.top}px`;
     inner.style.boxShadow = "0 18px 48px rgba(0, 0, 0, 0.22)";
-    inner.style.transition = "width 700ms cubic-bezier(0.16, 0.72, 0.18, 1), height 700ms cubic-bezier(0.16, 0.72, 0.18, 1), left 700ms cubic-bezier(0.16, 0.72, 0.18, 1), top 700ms cubic-bezier(0.16, 0.72, 0.18, 1), box-shadow 700ms cubic-bezier(0.16, 0.72, 0.18, 1)";
+    inner.style.transition = TILE_MOTION_TRANSITION;
 
     return waitForTileTransition(inner);
+  };
+
+  const flipSiblingProjectImagesToGrid = (tile) => {
+    const projectId = tile.dataset.projectId;
+    if (!projectId) return Promise.resolve();
+
+    tiles.forEach((candidate) => {
+      const isSibling = candidate !== tile && candidate.dataset.projectId === projectId && candidate.dataset.projectHref && candidate.dataset.imageSrc;
+      if (!isSibling) return;
+
+      const inner = candidate.querySelector(".tile-inner");
+      if (inner) {
+        inner.style.transition = TILE_FLIP_TRANSITION;
+      }
+      candidate.style.zIndex = "13";
+      candidate.style.setProperty("--flip-delay", "0ms");
+      candidate.classList.remove("is-flipped");
+    });
+
+    return new Promise((resolve) => {
+      window.setTimeout(resolve, TILE_MOTION_DURATION_MS);
+    });
   };
 
   const openExpandedTileProject = async (tile) => {
@@ -368,10 +434,27 @@ function attachTileExpandEffect(tiles) {
       url.searchParams.set("image", imageName);
     }
 
+    const siblingReveal = flipSiblingProjectImagesToGrid(tile);
+    const transitionToProject = Promise.all([
+      siblingReveal,
+      moveExpandedTileToProjectOrigin(tile),
+      ensureProjectRenderer()
+    ]);
+
     try {
-      await moveExpandedTileToProjectOrigin(tile);
+      await transitionToProject;
+      gridEl.classList.add("project-grid");
+      gridEl.setAttribute("aria-label", "Interaktiv projekt-grid");
+      window.renderProjectGrid(gridEl, {
+        imageName,
+        projectImageBasePath: `${url.pathname}moneyshot/`,
+        projectGridImageBasePath: "/grid/",
+        initialRevealDelayMs: 150
+      });
+      window.scrollTo(0, 0);
+      window.history.pushState({ projectId: tile.dataset.projectId, imageName }, "", url.href);
     } finally {
-      window.location.assign(url.href);
+      isOpeningProject = false;
     }
 
     return true;
@@ -385,6 +468,7 @@ function attachTileExpandEffect(tiles) {
     const number = expandedTile.querySelector(".tile-number");
 
     expandedTile.classList.remove("is-expanded");
+    expandedTile.classList.remove("is-project-transfer");
     expandedTile.setAttribute("aria-pressed", "false");
     expandedTile.style.zIndex = "";
 
@@ -449,7 +533,14 @@ function attachTileExpandEffect(tiles) {
   });
 }
 
-if (gridEl) {
+function renderLandingGrid() {
+  if (!gridEl) return;
+
+  gridEl.classList.remove("project-grid");
+  gridEl.setAttribute("aria-label", "Interaktiv portfolio-grid");
+  gridEl.innerHTML = "";
+  tileRegistry.clear();
+
   const fragment = document.createDocumentFragment();
 
   for (let id = 1; id <= TOTAL_TILES; id += 1) {
@@ -523,4 +614,8 @@ if (gridEl) {
   const tiles = Array.from(gridEl.children);
   attachRippleHoverEffect(tiles);
   attachTileExpandEffect(tiles);
+}
+
+if (gridEl) {
+  renderLandingGrid();
 }

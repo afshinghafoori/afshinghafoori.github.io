@@ -9,6 +9,19 @@
 
 .project-tile {
   background: var(--tile-color, #efefef);
+  overflow: hidden;
+  min-width: 0;
+  min-height: 0;
+}
+
+.project-tile img {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  object-fit: cover;
 }
 
 .project-hero {
@@ -20,7 +33,7 @@
   padding: 0;
   background: #e8e8e8;
   box-shadow: 0 18px 48px rgba(0, 0, 0, 0.22);
-  transition: width 1400ms cubic-bezier(0.16, 0.72, 0.18, 1), height 1400ms cubic-bezier(0.16, 0.72, 0.18, 1), left 1400ms cubic-bezier(0.16, 0.72, 0.18, 1), top 1400ms cubic-bezier(0.16, 0.72, 0.18, 1);
+  transition: width var(--project-motion-duration) var(--project-motion-easing), height var(--project-motion-duration) var(--project-motion-easing), left var(--project-motion-duration) var(--project-motion-easing), top var(--project-motion-duration) var(--project-motion-easing);
 }
 
 .project-hero img {
