@@ -130,10 +130,6 @@ body {
   background: var(--tile-color, #efefef);
 }
 
-.tile.is-project-transfer .tile-back img {
-  filter: grayscale(100%);
-}
-
 .tile-empty {
   width: 100%;
   height: 100%;
