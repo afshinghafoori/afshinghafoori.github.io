@@ -3,7 +3,7 @@ const MAX_GRID_ROWS = 12;
 const TOTAL_TILES = DESKTOP_COLUMNS * MAX_GRID_ROWS;
 const GRID_IMAGE_DIR = "grid";
 const AMMAN_PROJECT_PATH = "portfolio/architecture/Creative%20Competition%20-%20Amman%20hospital/";
-const PROJECT_ASSET_VERSION = "20260821e";
+const PROJECT_ASSET_VERSION = "20260823e";
 const TILE_MOTION_DURATION_MS = 700;
 const TILE_MOTION_EASING = "cubic-bezier(0.16, 0.72, 0.18, 1)";
 const TILE_MOTION_TRANSITION = `width ${TILE_MOTION_DURATION_MS}ms ${TILE_MOTION_EASING}, height ${TILE_MOTION_DURATION_MS}ms ${TILE_MOTION_EASING}, left ${TILE_MOTION_DURATION_MS}ms ${TILE_MOTION_EASING}, top ${TILE_MOTION_DURATION_MS}ms ${TILE_MOTION_EASING}, box-shadow ${TILE_MOTION_DURATION_MS}ms ${TILE_MOTION_EASING}`;
@@ -148,6 +148,28 @@ function getGridImagePath(imageName) {
 
 function getImageNameFromPath(imagePath) {
   return imagePath.split("/").pop() || "";
+}
+
+function getProjectImageNameFromGridImage(imageName) {
+  return imageName.replace("_grid.webp", "_project.webp");
+}
+
+function preloadImage(src) {
+  if (!src) return Promise.resolve();
+
+  return new Promise((resolve) => {
+    const image = new Image();
+    image.decoding = "async";
+    image.onload = () => {
+      if (image.decode) {
+        image.decode().then(resolve).catch(resolve);
+      } else {
+        resolve();
+      }
+    };
+    image.onerror = resolve;
+    image.src = src;
+  });
 }
 
 function loadStylesheetOnce(href) {
@@ -402,13 +424,13 @@ function attachTileExpandEffect(tiles) {
     return waitForTileTransition(inner);
   };
 
-  const flipSiblingProjectImagesToGrid = (tile) => {
+  const flipProjectImagesToGrid = (tile) => {
     const projectId = tile.dataset.projectId;
     if (!projectId) return Promise.resolve();
 
     tiles.forEach((candidate) => {
-      const isSibling = candidate !== tile && candidate.dataset.projectId === projectId && candidate.dataset.projectHref && candidate.dataset.imageSrc;
-      if (!isSibling) return;
+      const isProjectImage = candidate !== tile && candidate.dataset.projectId === projectId && candidate.dataset.imageSrc;
+      if (!isProjectImage) return;
 
       const inner = candidate.querySelector(".tile-inner");
       if (inner) {
@@ -434,11 +456,18 @@ function attachTileExpandEffect(tiles) {
       url.searchParams.set("image", imageName);
     }
 
-    const siblingReveal = flipSiblingProjectImagesToGrid(tile);
+    const projectImageName = getProjectImageNameFromGridImage(imageName);
+    const firstProjectImageReady = preloadImage(`${url.pathname}moneyshot/${projectImageName}`);
+    const projectRendererReady = Promise.all([
+      ensureProjectRenderer(),
+      firstProjectImageReady
+    ]);
+
+    const projectReveal = flipProjectImagesToGrid(tile);
     const transitionToProject = Promise.all([
-      siblingReveal,
+      projectReveal,
       moveExpandedTileToProjectOrigin(tile),
-      ensureProjectRenderer()
+      projectRendererReady
     ]);
 
     try {
@@ -449,6 +478,7 @@ function attachTileExpandEffect(tiles) {
         imageName,
         projectImageBasePath: `${url.pathname}moneyshot/`,
         projectGridImageBasePath: "/grid/",
+        handoffImageSrc: tile.dataset.imageSrc || "",
         initialRevealDelayMs: 150
       });
       window.scrollTo(0, 0);

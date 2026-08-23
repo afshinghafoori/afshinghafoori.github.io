@@ -12,7 +12,7 @@ const PROJECT_TILE_COLORS = new Map([
   [6, "#d8d8d8"],
   [14, "#e2e2e2"],
   [22, "#cecece"],
-  [36, "#d8d8d8"],
+  [36, "#ffffff"],
   [48, "#d8d8d8"],
   [55, "#d8d8d8"],
   [58, "#d8d8d8"],
@@ -28,7 +28,7 @@ const PROJECT_TILE_COLORS = new Map([
   [96, "#d8d8d8"]
 ]);
 
-const PROJECT_VISIBLE_GRID_IMAGES = new Map([
+const PROJECT_FLIPPED_GRID_IMAGES = new Map([
   [48, "Amman_Section2.webp"],
   [60, "Amman_Section1.webp"],
   [72, "Amman_Section.webp"],
@@ -61,8 +61,8 @@ function getProjectTileColor(id) {
   return PROJECT_TILE_COLORS.get(id) || PROJECT_PALETTE[id % PROJECT_PALETTE.length];
 }
 
-function getVisibleGridImage(id) {
-  const image = PROJECT_VISIBLE_GRID_IMAGES.get(id);
+function getFlippedGridImage(id) {
+  const image = PROJECT_FLIPPED_GRID_IMAGES.get(id);
   return image ? `${projectGridImageBasePath}${image}` : "";
 }
 
@@ -174,7 +174,6 @@ function renderProjectGrid(targetGridEl, options = {}) {
   selectedProjectGridImageName = options.imageName || "";
   projectImageBasePath = options.projectImageBasePath || "moneyshot/";
   projectGridImageBasePath = options.projectGridImageBasePath || "../../../grid/";
-  activeProjectGridEl.innerHTML = "";
   const initialRevealDelay = options.initialRevealDelayMs ?? PROJECT_HERO_REVEAL_DELAY_MS;
 
   const projectImageSequence = getProjectImageSequence();
@@ -187,17 +186,31 @@ function renderProjectGrid(targetGridEl, options = {}) {
     tile.style.setProperty("--tile-color", getProjectTileColor(id));
     tile.setAttribute("role", "listitem");
     tile.setAttribute("aria-hidden", "true");
-    const image = getVisibleGridImage(id);
-    tile.innerHTML = `
-      ${image ? `<img src="${image}" alt="" loading="eager" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;max-width:100%;object-fit:cover;display:block;">` : ""}
-      <span class="tile-number" aria-hidden="true">${getProjectTileLabel(id)}</span>
-    `;
+    const image = getFlippedGridImage(id);
+    if (image) {
+      tile.innerHTML = `
+        <span class="tile-inner">
+          <span class="tile-face tile-front" aria-hidden="true"></span>
+          <span class="tile-face tile-back" aria-hidden="true">
+            <img src="${image}" alt="" loading="eager" decoding="async">
+          </span>
+        </span>
+        <span class="tile-number" aria-hidden="true">${getProjectTileLabel(id)}</span>
+      `;
+    } else {
+      tile.innerHTML = `<span class="tile-number" aria-hidden="true">${getProjectTileLabel(id)}</span>`;
+    }
     fragment.appendChild(tile);
   }
 
   const hero = document.createElement("figure");
   hero.className = "project-hero";
   hero.setAttribute("aria-label", "Projektbild");
+  if (options.handoffImageSrc) {
+    hero.style.backgroundImage = `url("${options.handoffImageSrc.replace(/"/g, "%22")}")`;
+    hero.style.backgroundSize = "cover";
+    hero.style.backgroundPosition = "center";
+  }
   hero.innerHTML = `<img src="${projectImageSequence[0]}" alt="">`;
 
   const secondHero = document.createElement("figure");
@@ -214,12 +227,7 @@ function renderProjectGrid(targetGridEl, options = {}) {
   thirdHero.style.zIndex = "10";
   thirdHero.style.visibility = "hidden";
 
-  activeProjectGridEl.appendChild(fragment);
-  activeProjectGridEl.appendChild(hero);
-  activeProjectGridEl.appendChild(secondHero);
-  activeProjectGridEl.appendChild(thirdHero);
-
-  const animateHero = async () => {
+  const setInitialHeroLayout = () => {
     setHeroImageSpan(hero, 6, 3);
     setHeroImageSpan(secondHero, 6, 3);
     setHeroImageSpan(thirdHero, 6, 3);
@@ -235,6 +243,13 @@ function renderProjectGrid(targetGridEl, options = {}) {
     hero.style.transition = "";
     secondHero.style.transition = "";
     thirdHero.style.transition = "";
+  };
+
+  setInitialHeroLayout();
+  activeProjectGridEl.replaceChildren(fragment, hero, secondHero, thirdHero);
+
+  const animateHero = async () => {
+    setInitialHeroLayout();
 
     await wait(initialRevealDelay);
     await animateHeroFrame(hero, 1, 1, 6, 3);
