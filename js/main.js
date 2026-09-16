@@ -4,7 +4,7 @@ const TOTAL_TILES = DESKTOP_COLUMNS * MAX_GRID_ROWS;
 const GRID_IMAGE_DIR = "grid";
 const AMMAN_PROJECT_PATH = "portfolio/architecture/Creative%20Competition%20-%20Amman%20hospital/";
 const MIRADOR_PROJECT_PATH = "portfolio/architecture/Extreme%20environment%20-%20Mirador%20el%20rio/";
-const PROJECT_ASSET_VERSION = "20260916c";
+const PROJECT_ASSET_VERSION = "20260916d";
 const TILE_MOTION_DURATION_MS = 700;
 const TILE_MOTION_EASING = "cubic-bezier(0.16, 0.72, 0.18, 1)";
 const TILE_MOTION_TRANSITION = `width ${TILE_MOTION_DURATION_MS}ms ${TILE_MOTION_EASING}, height ${TILE_MOTION_DURATION_MS}ms ${TILE_MOTION_EASING}, left ${TILE_MOTION_DURATION_MS}ms ${TILE_MOTION_EASING}, top ${TILE_MOTION_DURATION_MS}ms ${TILE_MOTION_EASING}, box-shadow ${TILE_MOTION_DURATION_MS}ms ${TILE_MOTION_EASING}`;
@@ -14,11 +14,11 @@ const PROJECT_GRID_TO_MONEYSHOT = new Map([
   ["Amman_Moneyshot_grid.webp", "Amman_Moneyshot_project.webp"],
   ["Amman_Moneyshot1_grid.webp", "Amman_Moneyshot1_project.webp"],
   ["Amman_Moneyshot2_grid.webp", "Amman_Moneyshot2_project.webp"],
-  ["Mirador el rio_Moneyshot_grid.webp", "Mirador el rio_Moneyshot.webp"],
-  ["Mirador el rio_Moneyshot_grid1.webp", "Mirador el rio_Moneyshot1.webp"],
-  ["Mirador el rio_Moneyshot1_grid.webp", "Mirador el rio_Moneyshot1.webp"],
-  ["Mirador el rio_Moneyshot2_grid.webp", "Mirador el rio_Moneyshot2.webp"],
-  ["Mirador el rio_Moneyshot3_grid.webp", "Mirador el rio_Moneyshot3.webp"]
+  ["Mirador el rio_Moneyshot_grid.webp", "Mirador el rio_Moneyshot_project.webp"],
+  ["Mirador el rio_Moneyshot_grid1.webp", "Mirador el rio_Moneyshot_project.webp"],
+  ["Mirador el rio_Moneyshot1_grid.webp", "Mirador el rio_Moneyshot1_project.webp"],
+  ["Mirador el rio_Moneyshot2_grid.webp", "Mirador el rio_Moneyshot2_project.webp"],
+  ["Mirador el rio_Moneyshot3_grid.webp", "Mirador el rio_Moneyshot3_project.webp"]
 ]);
 
 const palette = ["#ffffff", "#f6f6f6", "#ececec", "#e2e2e2", "#d8d8d8", "#cecece"];

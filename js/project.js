@@ -46,12 +46,37 @@ const PROJECT_CONFIGS = new Map([
   ["mirador-el-rio", {
     flippedGridImages: new Map(),
     imageMap: new Map([
-      ["Mirador el rio_Moneyshot_grid.webp", "Mirador el rio_Moneyshot.webp"],
-      ["Mirador el rio_Moneyshot_grid1.webp", "Mirador el rio_Moneyshot1.webp"],
-      ["Mirador el rio_Moneyshot1_grid.webp", "Mirador el rio_Moneyshot1.webp"],
-      ["Mirador el rio_Moneyshot2_grid.webp", "Mirador el rio_Moneyshot2.webp"],
-      ["Mirador el rio_Moneyshot3_grid.webp", "Mirador el rio_Moneyshot3.webp"]
-    ])
+      ["Mirador el rio_Moneyshot_grid.webp", "Mirador el rio_Moneyshot_project.webp"],
+      ["Mirador el rio_Moneyshot_grid1.webp", "Mirador el rio_Moneyshot_project.webp"],
+      ["Mirador el rio_Moneyshot1_grid.webp", "Mirador el rio_Moneyshot1_project.webp"],
+      ["Mirador el rio_Moneyshot2_grid.webp", "Mirador el rio_Moneyshot2_project.webp"],
+      ["Mirador el rio_Moneyshot3_grid.webp", "Mirador el rio_Moneyshot3_project.webp"]
+    ]),
+    sequenceForSelected(selectedImage) {
+      const selectedProjectImage = this.imageMap.get(selectedImage);
+      const primaryProjectImage = "Mirador el rio_Moneyshot_project.webp";
+      const firstDetailProjectImage = "Mirador el rio_Moneyshot1_project.webp";
+      const secondDetailProjectImage = "Mirador el rio_Moneyshot2_project.webp";
+      const thirdProjectImage = "Mirador el rio_Moneyshot3_project.webp";
+
+      if (selectedProjectImage === primaryProjectImage) {
+        return [primaryProjectImage, firstDetailProjectImage, secondDetailProjectImage];
+      }
+
+      if (selectedProjectImage === firstDetailProjectImage) {
+        return [firstDetailProjectImage, secondDetailProjectImage, primaryProjectImage];
+      }
+
+      if (selectedProjectImage === secondDetailProjectImage) {
+        return [secondDetailProjectImage, firstDetailProjectImage, primaryProjectImage];
+      }
+
+      if (selectedProjectImage === thirdProjectImage) {
+        return [thirdProjectImage, secondDetailProjectImage, primaryProjectImage];
+      }
+
+      return [selectedProjectImage, secondDetailProjectImage, primaryProjectImage];
+    }
   }]
 ]);
 
@@ -111,6 +136,11 @@ function getRequestedGridImageName() {
 function getProjectImageSequence() {
   const projectImageOrder = getProjectImageOrder();
   const selectedImage = getRequestedGridImageName();
+
+  if (activeProjectConfig.sequenceForSelected) {
+    return activeProjectConfig.sequenceForSelected(selectedImage).map((imageName) => `${projectImageBasePath}${imageName}`);
+  }
+
   const selectedIndex = projectImageOrder.indexOf(selectedImage);
   return [0, 1, 2].map((_, index) => {
     const imageName = projectImageOrder[(selectedIndex + index) % projectImageOrder.length];
