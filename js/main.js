@@ -3,11 +3,23 @@ const MAX_GRID_ROWS = 12;
 const TOTAL_TILES = DESKTOP_COLUMNS * MAX_GRID_ROWS;
 const GRID_IMAGE_DIR = "grid";
 const AMMAN_PROJECT_PATH = "portfolio/architecture/Creative%20Competition%20-%20Amman%20hospital/";
-const PROJECT_ASSET_VERSION = "20260916b";
+const MIRADOR_PROJECT_PATH = "portfolio/architecture/Extreme%20environment%20-%20Mirador%20el%20rio/";
+const PROJECT_ASSET_VERSION = "20260916c";
 const TILE_MOTION_DURATION_MS = 700;
 const TILE_MOTION_EASING = "cubic-bezier(0.16, 0.72, 0.18, 1)";
 const TILE_MOTION_TRANSITION = `width ${TILE_MOTION_DURATION_MS}ms ${TILE_MOTION_EASING}, height ${TILE_MOTION_DURATION_MS}ms ${TILE_MOTION_EASING}, left ${TILE_MOTION_DURATION_MS}ms ${TILE_MOTION_EASING}, top ${TILE_MOTION_DURATION_MS}ms ${TILE_MOTION_EASING}, box-shadow ${TILE_MOTION_DURATION_MS}ms ${TILE_MOTION_EASING}`;
 const TILE_FLIP_TRANSITION = `transform ${TILE_MOTION_DURATION_MS}ms ${TILE_MOTION_EASING}`;
+const PROJECT_PAGE_PROJECT_IDS = new Set(["amman", "mirador-el-rio"]);
+const PROJECT_GRID_TO_MONEYSHOT = new Map([
+  ["Amman_Moneyshot_grid.webp", "Amman_Moneyshot_project.webp"],
+  ["Amman_Moneyshot1_grid.webp", "Amman_Moneyshot1_project.webp"],
+  ["Amman_Moneyshot2_grid.webp", "Amman_Moneyshot2_project.webp"],
+  ["Mirador el rio_Moneyshot_grid.webp", "Mirador el rio_Moneyshot.webp"],
+  ["Mirador el rio_Moneyshot_grid1.webp", "Mirador el rio_Moneyshot1.webp"],
+  ["Mirador el rio_Moneyshot1_grid.webp", "Mirador el rio_Moneyshot1.webp"],
+  ["Mirador el rio_Moneyshot2_grid.webp", "Mirador el rio_Moneyshot2.webp"],
+  ["Mirador el rio_Moneyshot3_grid.webp", "Mirador el rio_Moneyshot3.webp"]
+]);
 
 const palette = ["#ffffff", "#f6f6f6", "#ececec", "#e2e2e2", "#d8d8d8", "#cecece"];
 
@@ -105,7 +117,7 @@ const gridProjects = [
     projectId: "mirador-el-rio",
     color: "#d8d8d8",
     imageName: "Mirador el rio_Moneyshot1_grid.webp",
-    href: "",
+    href: MIRADOR_PROJECT_PATH,
     label: "Mirador el rio"
   },
   {
@@ -113,7 +125,7 @@ const gridProjects = [
     projectId: "mirador-el-rio",
     color: "#d8d8d8",
     imageName: "Mirador el rio_Moneyshot2_grid.webp",
-    href: "",
+    href: MIRADOR_PROJECT_PATH,
     label: "Mirador el rio"
   },
   {
@@ -121,7 +133,7 @@ const gridProjects = [
     projectId: "mirador-el-rio",
     color: "#d8d8d8",
     imageName: "Mirador el rio_Moneyshot3_grid.webp",
-    href: "",
+    href: MIRADOR_PROJECT_PATH,
     label: "Mirador el rio"
   },
   {
@@ -129,7 +141,7 @@ const gridProjects = [
     projectId: "mirador-el-rio",
     color: "#d8d8d8",
     imageName: "Mirador el rio_Moneyshot_grid.webp",
-    href: "",
+    href: MIRADOR_PROJECT_PATH,
     label: "Mirador el rio"
   },
   {
@@ -137,7 +149,7 @@ const gridProjects = [
     projectId: "mirador-el-rio",
     color: "#d8d8d8",
     imageName: "Mirador el rio_Moneyshot_grid1.webp",
-    href: "",
+    href: MIRADOR_PROJECT_PATH,
     label: "Mirador el rio"
   }
 ];
@@ -151,7 +163,7 @@ function getImageNameFromPath(imagePath) {
 }
 
 function getProjectImageNameFromGridImage(imageName) {
-  return imageName.replace("_grid.webp", "_project.webp");
+  return PROJECT_GRID_TO_MONEYSHOT.get(imageName) || imageName.replace("_grid.webp", "_project.webp");
 }
 
 function preloadImage(src) {
@@ -476,6 +488,7 @@ function attachTileExpandEffect(tiles) {
       gridEl.setAttribute("aria-label", "Interaktiv projekt-grid");
       window.renderProjectGrid(gridEl, {
         imageName,
+        projectId: tile.dataset.projectId,
         projectImageBasePath: `${url.pathname}moneyshot/`,
         projectGridImageBasePath: "/grid/",
         handoffImageSrc: tile.dataset.imageSrc || "",
@@ -584,7 +597,7 @@ function renderLandingGrid() {
       label: "Dekorativ ruta"
     };
 
-    const opensProjectAfterExpand = Boolean(tile.projectId === "amman" && tile.image && tile.href);
+    const opensProjectAfterExpand = Boolean(PROJECT_PAGE_PROJECT_IDS.has(tile.projectId) && tile.image && tile.href);
     const isLink = Boolean(tile.href && !opensProjectAfterExpand);
     const wrapperTag = isLink ? "a" : "div";
     const wrapper = document.createElement(wrapperTag);

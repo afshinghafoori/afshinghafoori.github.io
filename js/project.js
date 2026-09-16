@@ -28,26 +28,41 @@ const PROJECT_TILE_COLORS = new Map([
   [96, "#d8d8d8"]
 ]);
 
-const PROJECT_FLIPPED_GRID_IMAGES = new Map([
-  [48, "Amman_Section_grid2.webp"],
-  [60, "Amman_Section_grid1.webp"],
-  [72, "Amman_Section_grid.webp"],
-  [84, "Amman_Diagram_grid2.webp"],
-  [96, "Amman_Diagram_grid1.webp"]
+const PROJECT_CONFIGS = new Map([
+  ["amman", {
+    flippedGridImages: new Map([
+      [48, "Amman_Section_grid2.webp"],
+      [60, "Amman_Section_grid1.webp"],
+      [72, "Amman_Section_grid.webp"],
+      [84, "Amman_Diagram_grid2.webp"],
+      [96, "Amman_Diagram_grid1.webp"]
+    ]),
+    imageMap: new Map([
+      ["Amman_Moneyshot_grid.webp", "Amman_Moneyshot_project.webp"],
+      ["Amman_Moneyshot1_grid.webp", "Amman_Moneyshot1_project.webp"],
+      ["Amman_Moneyshot2_grid.webp", "Amman_Moneyshot2_project.webp"]
+    ])
+  }],
+  ["mirador-el-rio", {
+    flippedGridImages: new Map(),
+    imageMap: new Map([
+      ["Mirador el rio_Moneyshot_grid.webp", "Mirador el rio_Moneyshot.webp"],
+      ["Mirador el rio_Moneyshot_grid1.webp", "Mirador el rio_Moneyshot1.webp"],
+      ["Mirador el rio_Moneyshot1_grid.webp", "Mirador el rio_Moneyshot1.webp"],
+      ["Mirador el rio_Moneyshot2_grid.webp", "Mirador el rio_Moneyshot2.webp"],
+      ["Mirador el rio_Moneyshot3_grid.webp", "Mirador el rio_Moneyshot3.webp"]
+    ])
+  }]
 ]);
 
-const projectImageMap = new Map([
-  ["Amman_Moneyshot_grid.webp", "Amman_Moneyshot_project.webp"],
-  ["Amman_Moneyshot1_grid.webp", "Amman_Moneyshot1_project.webp"],
-  ["Amman_Moneyshot2_grid.webp", "Amman_Moneyshot2_project.webp"]
-]);
-
-const projectImageOrder = Array.from(projectImageMap.keys());
+const DEFAULT_PROJECT_ID = "amman";
+const DEFAULT_PROJECT_CONFIG = PROJECT_CONFIGS.get(DEFAULT_PROJECT_ID);
 
 let activeProjectGridEl = document.getElementById("project-grid");
 let selectedProjectGridImageName = "";
 let projectImageBasePath = "moneyshot/";
 let projectGridImageBasePath = "../../../grid/";
+let activeProjectConfig = DEFAULT_PROJECT_CONFIG;
 
 function getProjectTileLabel(id) {
   return String(id).padStart(3, "0");
@@ -61,23 +76,45 @@ function getProjectTileColor(id) {
   return PROJECT_TILE_COLORS.get(id) || PROJECT_PALETTE[id % PROJECT_PALETTE.length];
 }
 
+function getProjectIdFromPath() {
+  const path = decodeURIComponent(window.location.pathname).toLowerCase();
+
+  if (path.includes("extreme environment - mirador el rio")) {
+    return "mirador-el-rio";
+  }
+
+  return DEFAULT_PROJECT_ID;
+}
+
+function setActiveProjectConfig(options = {}) {
+  const projectId = options.projectId || activeProjectGridEl?.dataset.projectId || getProjectIdFromPath();
+  activeProjectConfig = PROJECT_CONFIGS.get(projectId) || DEFAULT_PROJECT_CONFIG;
+  return PROJECT_CONFIGS.has(projectId) ? projectId : DEFAULT_PROJECT_ID;
+}
+
+function getProjectImageOrder() {
+  return Array.from(activeProjectConfig.imageMap.keys());
+}
+
 function getFlippedGridImage(id) {
-  const image = PROJECT_FLIPPED_GRID_IMAGES.get(id);
+  const image = activeProjectConfig.flippedGridImages.get(id);
   return image ? `${projectGridImageBasePath}${image}` : "";
 }
 
 function getRequestedGridImageName() {
   const params = new URLSearchParams(window.location.search);
+  const projectImageOrder = getProjectImageOrder();
   const requestedImage = selectedProjectGridImageName || params.get("image") || projectImageOrder[0];
-  return projectImageMap.has(requestedImage) ? requestedImage : projectImageOrder[0];
+  return activeProjectConfig.imageMap.has(requestedImage) ? requestedImage : projectImageOrder[0];
 }
 
 function getProjectImageSequence() {
+  const projectImageOrder = getProjectImageOrder();
   const selectedImage = getRequestedGridImageName();
   const selectedIndex = projectImageOrder.indexOf(selectedImage);
-  return projectImageOrder.map((_, index) => {
+  return [0, 1, 2].map((_, index) => {
     const imageName = projectImageOrder[(selectedIndex + index) % projectImageOrder.length];
-    return `${projectImageBasePath}${projectImageMap.get(imageName)}`;
+    return `${projectImageBasePath}${activeProjectConfig.imageMap.get(imageName)}`;
   });
 }
 
@@ -171,6 +208,8 @@ function renderProjectGrid(targetGridEl, options = {}) {
   if (!targetGridEl) return;
 
   activeProjectGridEl = targetGridEl;
+  const projectId = setActiveProjectConfig(options);
+  activeProjectGridEl.dataset.projectId = projectId;
   selectedProjectGridImageName = options.imageName || "";
   projectImageBasePath = options.projectImageBasePath || "moneyshot/";
   projectGridImageBasePath = options.projectGridImageBasePath || "../../../grid/";
