@@ -3,7 +3,7 @@ const MAX_GRID_ROWS = 12;
 const TOTAL_TILES = DESKTOP_COLUMNS * MAX_GRID_ROWS;
 const GRID_IMAGE_DIR = "grid";
 const AMMAN_PROJECT_PATH = "portfolio/architecture/Creative%20Competition%20-%20Amman%20hospital/";
-const PROJECT_ASSET_VERSION = "20260823e";
+const PROJECT_ASSET_VERSION = "20260916a";
 const TILE_MOTION_DURATION_MS = 700;
 const TILE_MOTION_EASING = "cubic-bezier(0.16, 0.72, 0.18, 1)";
 const TILE_MOTION_TRANSITION = `width ${TILE_MOTION_DURATION_MS}ms ${TILE_MOTION_EASING}, height ${TILE_MOTION_DURATION_MS}ms ${TILE_MOTION_EASING}, left ${TILE_MOTION_DURATION_MS}ms ${TILE_MOTION_EASING}, top ${TILE_MOTION_DURATION_MS}ms ${TILE_MOTION_EASING}, box-shadow ${TILE_MOTION_DURATION_MS}ms ${TILE_MOTION_EASING}`;
@@ -102,43 +102,43 @@ const gridProjects = [
   },
   {
     id: 80,
-    projectId: "lanzarote",
+    projectId: "mirador-el-rio",
     color: "#d8d8d8",
-    imageName: "LanzaroteMoneyshot1.webp",
+    imageName: "Mirador el rio_Moneyshot1_grid.webp",
     href: "",
-    label: "Lanzarote"
+    label: "Mirador el rio"
   },
   {
     id: 67,
-    projectId: "lanzarote",
+    projectId: "mirador-el-rio",
     color: "#d8d8d8",
-    imageName: "LanzaroteMoneyshot2.webp",
+    imageName: "Mirador el rio_Moneyshot2_grid.webp",
     href: "",
-    label: "Lanzarote"
+    label: "Mirador el rio"
   },
   {
     id: 55,
-    projectId: "lanzarote",
+    projectId: "mirador-el-rio",
     color: "#d8d8d8",
-    imageName: "LanzaroteMoneyshot3.webp",
+    imageName: "Mirador el rio_Moneyshot3_grid.webp",
     href: "",
-    label: "Lanzarote"
+    label: "Mirador el rio"
   },
   {
     id: 90,
-    projectId: "lanzarote",
+    projectId: "mirador-el-rio",
     color: "#d8d8d8",
-    imageName: "LanzaroteMoneyshot_Landscape.webp",
+    imageName: "Mirador el rio_Moneyshot_grid.webp",
     href: "",
-    label: "Lanzarote"
+    label: "Mirador el rio"
   },
   {
     id: 91,
-    projectId: "lanzarote",
+    projectId: "mirador-el-rio",
     color: "#d8d8d8",
-    imageName: "LanzaroteMoneyshot_Landscape1.webp",
+    imageName: "Mirador el rio_Moneyshot_grid1.webp",
     href: "",
-    label: "Lanzarote"
+    label: "Mirador el rio"
   }
 ];
 
