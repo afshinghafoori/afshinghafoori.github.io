@@ -3,7 +3,7 @@ const MAX_GRID_ROWS = 12;
 const TOTAL_TILES = DESKTOP_COLUMNS * MAX_GRID_ROWS;
 const GRID_IMAGE_DIR = "grid";
 const AMMAN_PROJECT_PATH = "portfolio/architecture/Creative%20Competition%20-%20Amman%20hospital/";
-const PROJECT_ASSET_VERSION = "20260916a";
+const PROJECT_ASSET_VERSION = "20260916b";
 const TILE_MOTION_DURATION_MS = 700;
 const TILE_MOTION_EASING = "cubic-bezier(0.16, 0.72, 0.18, 1)";
 const TILE_MOTION_TRANSITION = `width ${TILE_MOTION_DURATION_MS}ms ${TILE_MOTION_EASING}, height ${TILE_MOTION_DURATION_MS}ms ${TILE_MOTION_EASING}, left ${TILE_MOTION_DURATION_MS}ms ${TILE_MOTION_EASING}, top ${TILE_MOTION_DURATION_MS}ms ${TILE_MOTION_EASING}, box-shadow ${TILE_MOTION_DURATION_MS}ms ${TILE_MOTION_EASING}`;
@@ -40,7 +40,7 @@ const gridProjects = [
     id: 84,
     projectId: "amman",
     color: "#d8d8d8",
-    imageName: "Tower Diagram2.webp",
+    imageName: "Amman_Diagram_grid2.webp",
     href: "",
     label: "Amman"
   },
@@ -48,7 +48,7 @@ const gridProjects = [
     id: 96,
     projectId: "amman",
     color: "#d8d8d8",
-    imageName: "Tower Diagram1.webp",
+    imageName: "Amman_Diagram_grid1.webp",
     href: "",
     label: "Amman"
   },
@@ -56,7 +56,7 @@ const gridProjects = [
     id: 48,
     projectId: "amman",
     color: "#d8d8d8",
-    imageName: "Amman_Section2.webp",
+    imageName: "Amman_Section_grid2.webp",
     href: "",
     label: "Amman"
   },
@@ -64,7 +64,7 @@ const gridProjects = [
     id: 60,
     projectId: "amman",
     color: "#d8d8d8",
-    imageName: "Amman_Section1.webp",
+    imageName: "Amman_Section_grid1.webp",
     href: "",
     label: "Amman"
   },
@@ -72,7 +72,7 @@ const gridProjects = [
     id: 72,
     projectId: "amman",
     color: "#d8d8d8",
-    imageName: "Amman_Section.webp",
+    imageName: "Amman_Section_grid.webp",
     href: "",
     label: "Amman"
   },

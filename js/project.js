@@ -29,11 +29,11 @@ const PROJECT_TILE_COLORS = new Map([
 ]);
 
 const PROJECT_FLIPPED_GRID_IMAGES = new Map([
-  [48, "Amman_Section2.webp"],
-  [60, "Amman_Section1.webp"],
-  [72, "Amman_Section.webp"],
-  [84, "Tower Diagram2.webp"],
-  [96, "Tower Diagram1.webp"]
+  [48, "Amman_Section_grid2.webp"],
+  [60, "Amman_Section_grid1.webp"],
+  [72, "Amman_Section_grid.webp"],
+  [84, "Amman_Diagram_grid2.webp"],
+  [96, "Amman_Diagram_grid1.webp"]
 ]);
 
 const projectImageMap = new Map([
