@@ -4,12 +4,16 @@ const TOTAL_TILES = DESKTOP_COLUMNS * MAX_GRID_ROWS;
 const GRID_IMAGE_DIR = "grid";
 const AMMAN_PROJECT_PATH = "portfolio/architecture/Creative%20Competition%20-%20Amman%20hospital/";
 const MIRADOR_PROJECT_PATH = "portfolio/architecture/Extreme%20environment%20-%20Mirador%20el%20rio/";
-const PROJECT_ASSET_VERSION = "20260916d";
+const PROJECT_ASSET_VERSION = "20260916f";
 const TILE_MOTION_DURATION_MS = 700;
 const TILE_MOTION_EASING = "cubic-bezier(0.16, 0.72, 0.18, 1)";
 const TILE_MOTION_TRANSITION = `width ${TILE_MOTION_DURATION_MS}ms ${TILE_MOTION_EASING}, height ${TILE_MOTION_DURATION_MS}ms ${TILE_MOTION_EASING}, left ${TILE_MOTION_DURATION_MS}ms ${TILE_MOTION_EASING}, top ${TILE_MOTION_DURATION_MS}ms ${TILE_MOTION_EASING}, box-shadow ${TILE_MOTION_DURATION_MS}ms ${TILE_MOTION_EASING}`;
 const TILE_FLIP_TRANSITION = `transform ${TILE_MOTION_DURATION_MS}ms ${TILE_MOTION_EASING}`;
 const PROJECT_PAGE_PROJECT_IDS = new Set(["amman", "mirador-el-rio"]);
+const LEFTWARD_PROJECT_ENTRY_IMAGES = new Set([
+  "Mirador el rio_Moneyshot_grid1.webp",
+  "Mirador el rio_Moneyshot3_grid.webp"
+]);
 const PROJECT_GRID_TO_MONEYSHOT = new Map([
   ["Amman_Moneyshot_grid.webp", "Amman_Moneyshot_project.webp"],
   ["Amman_Moneyshot1_grid.webp", "Amman_Moneyshot1_project.webp"],
@@ -164,6 +168,10 @@ function getImageNameFromPath(imagePath) {
 
 function getProjectImageNameFromGridImage(imageName) {
   return PROJECT_GRID_TO_MONEYSHOT.get(imageName) || imageName.replace("_grid.webp", "_project.webp");
+}
+
+function getProjectEntryLayout(imageName) {
+  return LEFTWARD_PROJECT_ENTRY_IMAGES.has(imageName) ? "leftward" : "standard";
 }
 
 function preloadImage(src) {
@@ -381,16 +389,19 @@ function attachTileExpandEffect(tiles) {
     expandedTile = tile;
   };
 
-  const getProjectOriginRect = () => {
+  const getProjectOriginRect = (tile) => {
     const gridRect = gridEl.getBoundingClientRect();
     const gridStyles = window.getComputedStyle(gridEl);
     const gap = getPixelValue(gridStyles.columnGap);
     const paddingLeft = getPixelValue(gridStyles.paddingLeft);
     const paddingTop = getPixelValue(gridStyles.paddingTop);
-    const tileSize = (gridEl.clientWidth - (paddingLeft * 2) - ((getCurrentColumnCount() - 1) * gap)) / getCurrentColumnCount();
+    const currentColumns = getCurrentColumnCount();
+    const tileSize = (gridEl.clientWidth - (paddingLeft * 2) - ((currentColumns - 1) * gap)) / currentColumns;
+    const imageName = getImageNameFromPath(tile?.dataset.imageSrc || "");
+    const columnStart = getProjectEntryLayout(imageName) === "leftward" ? Math.min(4, Math.max(currentColumns - 2, 1)) : 1;
 
     return {
-      left: gridRect.left + paddingLeft,
+      left: gridRect.left + paddingLeft + ((columnStart - 1) * (tileSize + gap)),
       top: gridRect.top + paddingTop,
       width: (tileSize * 3) + (gap * 2),
       height: (tileSize * 3) + (gap * 2)
@@ -423,7 +434,7 @@ function attachTileExpandEffect(tiles) {
     if (!inner) return Promise.resolve();
 
     const tileRect = tile.getBoundingClientRect();
-    const targetRect = getProjectOriginRect();
+    const targetRect = getProjectOriginRect(tile);
 
     tile.classList.add("is-project-transfer");
     inner.style.width = `${targetRect.width}px`;
@@ -488,6 +499,7 @@ function attachTileExpandEffect(tiles) {
       gridEl.setAttribute("aria-label", "Interaktiv projekt-grid");
       window.renderProjectGrid(gridEl, {
         imageName,
+        entryLayout: getProjectEntryLayout(imageName),
         projectId: tile.dataset.projectId,
         projectImageBasePath: `${url.pathname}moneyshot/`,
         projectGridImageBasePath: "/grid/",

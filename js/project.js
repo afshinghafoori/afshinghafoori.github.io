@@ -148,6 +148,53 @@ function getProjectImageSequence() {
   });
 }
 
+function getProjectHeroLayout(options = {}) {
+  const selectedImage = getRequestedGridImageName();
+  const isLeftwardEntry = options.entryLayout === "leftward" || selectedImage === "Mirador el rio_Moneyshot_grid1.webp" || selectedImage === "Mirador el rio_Moneyshot3_grid.webp";
+
+  if (isLeftwardEntry) {
+    return {
+      initial: [
+        [4, 1, 3, 3],
+        [4, 1, 3, 3],
+        [7, 1, 3, 3]
+      ],
+      expanded: [
+        [1, 1, 6, 3],
+        [4, 1, 6, 3],
+        [7, 1, 6, 3]
+      ],
+      collapsed: [
+        [1, 1, 3, 3],
+        [4, 1, 3, 3],
+        [7, 1, 3, 3]
+      ],
+      initialImageAnchor: ["right", "left", "left"],
+      collapsedImageAnchor: ["left", "left", "left"]
+    };
+  }
+
+  return {
+    initial: [
+      [1, 1, 3, 3],
+      [4, 1, 3, 3],
+      [7, 1, 3, 3]
+    ],
+    expanded: [
+      [1, 1, 6, 3],
+      [4, 1, 6, 3],
+      [7, 1, 6, 3]
+    ],
+    collapsed: [
+      [1, 1, 3, 3],
+      [4, 1, 3, 3],
+      [7, 1, 3, 3]
+    ],
+    initialImageAnchor: ["left", "left", "left"],
+    collapsedImageAnchor: ["left", "left", "left"]
+  };
+}
+
 function getGridMetrics() {
   const gridStyles = window.getComputedStyle(activeProjectGridEl);
   const gap = getPixelValue(gridStyles.columnGap);
@@ -187,13 +234,17 @@ function setHeroFrame(hero, columnStart, rowStart, columns, rows) {
   hero.style.height = `${span.height}px`;
 }
 
-function setHeroImageSpan(hero, columns, rows) {
+function setHeroImageSpan(hero, columns, rows, imageAnchor = "left") {
   const image = hero.querySelector("img");
   const span = getHeroSpan(1, 1, columns, rows);
   if (!image) return;
 
   image.style.width = `${span.width}px`;
   image.style.height = `${span.height}px`;
+  image.style.position = imageAnchor === "right" ? "absolute" : "";
+  image.style.right = imageAnchor === "right" ? "0" : "";
+  image.style.left = imageAnchor === "right" ? "auto" : "";
+  image.style.top = imageAnchor === "right" ? "0" : "";
 }
 
 function wait(ms) {
@@ -246,6 +297,7 @@ function renderProjectGrid(targetGridEl, options = {}) {
   const initialRevealDelay = options.initialRevealDelayMs ?? PROJECT_HERO_REVEAL_DELAY_MS;
 
   const projectImageSequence = getProjectImageSequence();
+  const heroLayout = getProjectHeroLayout(options);
   const fragment = document.createDocumentFragment();
 
   for (let id = 1; id <= PROJECT_TILE_COUNT; id += 1) {
@@ -297,15 +349,15 @@ function renderProjectGrid(targetGridEl, options = {}) {
   thirdHero.style.visibility = "hidden";
 
   const setInitialHeroLayout = () => {
-    setHeroImageSpan(hero, 6, 3);
-    setHeroImageSpan(secondHero, 6, 3);
-    setHeroImageSpan(thirdHero, 6, 3);
+    setHeroImageSpan(hero, 6, 3, heroLayout.initialImageAnchor[0]);
+    setHeroImageSpan(secondHero, 6, 3, heroLayout.initialImageAnchor[1]);
+    setHeroImageSpan(thirdHero, 6, 3, heroLayout.initialImageAnchor[2]);
     hero.style.transition = "none";
     secondHero.style.transition = "none";
     thirdHero.style.transition = "none";
-    setHeroFrame(hero, 1, 1, 3, 3);
-    setHeroFrame(secondHero, 4, 1, 3, 3);
-    setHeroFrame(thirdHero, 7, 1, 3, 3);
+    setHeroFrame(hero, ...heroLayout.initial[0]);
+    setHeroFrame(secondHero, ...heroLayout.initial[1]);
+    setHeroFrame(thirdHero, ...heroLayout.initial[2]);
     hero.offsetWidth;
     secondHero.offsetWidth;
     thirdHero.offsetWidth;
@@ -321,31 +373,33 @@ function renderProjectGrid(targetGridEl, options = {}) {
     setInitialHeroLayout();
 
     await wait(initialRevealDelay);
-    await animateHeroFrame(hero, 1, 1, 6, 3);
+    await animateHeroFrame(hero, ...heroLayout.expanded[0]);
     await wait(PROJECT_HERO_PAUSE_MS);
 
     secondHero.style.visibility = "visible";
-    await animateHeroFrame(hero, 1, 1, 3, 3, PROJECT_HERO_REVERSE_TRANSITION);
+    setHeroImageSpan(hero, 6, 3, heroLayout.collapsedImageAnchor[0]);
+    await animateHeroFrame(hero, ...heroLayout.collapsed[0], PROJECT_HERO_REVERSE_TRANSITION);
 
     await wait(PROJECT_HERO_REVEAL_DELAY_MS);
-    await animateHeroFrame(secondHero, 4, 1, 6, 3);
+    await animateHeroFrame(secondHero, ...heroLayout.expanded[1]);
     await wait(PROJECT_HERO_PAUSE_MS);
 
     thirdHero.style.visibility = "visible";
-    await animateHeroFrame(secondHero, 4, 1, 3, 3, PROJECT_HERO_REVERSE_TRANSITION);
+    setHeroImageSpan(secondHero, 6, 3, heroLayout.collapsedImageAnchor[1]);
+    await animateHeroFrame(secondHero, ...heroLayout.collapsed[1], PROJECT_HERO_REVERSE_TRANSITION);
 
     await wait(PROJECT_HERO_REVEAL_DELAY_MS);
-    await animateHeroFrame(thirdHero, 7, 1, 6, 3);
+    await animateHeroFrame(thirdHero, ...heroLayout.expanded[2]);
   };
 
   animateHero();
   window.addEventListener("resize", () => {
-    setHeroImageSpan(hero, 6, 3);
-    setHeroImageSpan(secondHero, 6, 3);
-    setHeroImageSpan(thirdHero, 6, 3);
-    setHeroFrame(hero, 1, 1, 3, 3);
-    setHeroFrame(secondHero, 4, 1, 3, 3);
-    setHeroFrame(thirdHero, 7, 1, 6, 3);
+    setHeroImageSpan(hero, 6, 3, heroLayout.collapsedImageAnchor[0]);
+    setHeroImageSpan(secondHero, 6, 3, heroLayout.collapsedImageAnchor[1]);
+    setHeroImageSpan(thirdHero, 6, 3, heroLayout.collapsedImageAnchor[2]);
+    setHeroFrame(hero, ...heroLayout.collapsed[0]);
+    setHeroFrame(secondHero, ...heroLayout.collapsed[1]);
+    setHeroFrame(thirdHero, ...heroLayout.expanded[2]);
   });
 }
 
